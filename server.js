@@ -1,7 +1,7 @@
 // ============================================================
-// PGRS KENINGAU — SERVER (v3)
-// Model: gemini-3.8-flash
-// Sheet: A-L (12 kolum)
+// PGRS KENINGAU — SERVER (v4 FAST)
+// Model: gemini-2.0-flash-lite (paling laju)
+// Auto-fallback: cuba 4 model automatik
 // ============================================================
 
 const express = require('express');
@@ -21,12 +21,18 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GOOGLE_SHEET_ID = process.env.GOOGLE_SHEET_ID;
 
 // ============================================================
-// GEMINI AI SETUP
+// GEMINI AI SETUP + AUTO-FALLBACK
 // ============================================================
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
-// Model terkini — Google recommend
-const GEMINI_MODEL = 'gemini-3.8-flash';
+// Senarai model — cuba satu-satu kalau gagal
+// Susunan: paling cepat & stabil dulu
+const MODEL_LIST = [
+  'gemini-2.0-flash-lite',   // 1. Paling cepat & ringan
+  'gemini-2.0-flash',         // 2. Cepat & stabil
+  'gemini-2.5-flash',         // 3. Sederhana
+  'gemini-3.8-flash'          // 4. Terkini (last resort)
+];
 
 // ============================================================
 // GOOGLE SHEETS SETUP (SECRET FILE)
@@ -54,6 +60,31 @@ function checkPassword(req, res, next) {
 }
 
 // ============================================================
+// HELPER: CALL GEMINI WITH FALLBACK
+// ============================================================
+async function callGeminiWithFallback(parts) {
+  let lastError = null;
+
+  for (const modelName of MODEL_LIST) {
+    try {
+      console.log(`[AI] Trying model: ${modelName}`);
+      const model = genAI.getGenerativeModel({ model: modelName });
+      const result = await model.generateContent(parts);
+      const text = result.response.text();
+      console.log(`[AI] ✅ Success with: ${modelName}`);
+      return { success: true, text, model: modelName };
+    } catch (err) {
+      console.log(`[AI] ❌ Failed ${modelName}: ${err.message.substring(0, 80)}`);
+      lastError = err;
+      // Cuba model seterusnya
+    }
+  }
+
+  // Semua model gagal
+  return { success: false, error: lastError?.message || 'Semua model gagal' };
+}
+
+// ============================================================
 // ROUTES
 // ============================================================
 
@@ -64,7 +95,7 @@ app.get('/api/check-password', (req, res) => {
   res.status(401).json({ success: false, error: 'Password salah' });
 });
 
-// Get next number (No Borang / No Ahli)
+// Get next number
 app.get('/api/next-number', checkPassword, async (req, res) => {
   try {
     const response = await sheets.spreadsheets.values.get({
@@ -81,12 +112,15 @@ app.get('/api/next-number', checkPassword, async (req, res) => {
   }
 });
 
-// Test AI
+// Test AI — cuba semua model
 app.get('/api/test-ai', checkPassword, async (req, res) => {
   try {
-    const model = genAI.getGenerativeModel({ model: GEMINI_MODEL });
-    const result = await model.generateContent('Balas dengan: OK');
-    res.json({ success: true, model: GEMINI_MODEL, reply: result.response.text() });
+    const result = await callGeminiWithFallback('Balas dengan: OK');
+    if (result.success) {
+      res.json({ success: true, model: result.model, reply: result.text });
+    } else {
+      res.status(503).json({ error: result.error });
+    }
   } catch (err) {
     console.error('Error test-ai:', err);
     res.status(500).json({ error: err.message });
@@ -101,27 +135,12 @@ app.post('/api/scan', checkPassword, async (req, res) => {
       return res.status(400).json({ error: 'Tiada gambar dihantar' });
     }
 
-    const model = genAI.getGenerativeModel({ model: GEMINI_MODEL });
+    // Prompt RINGKAS — lagi cepat process
+    const prompt = `Extract data from this PGRS membership form. Return ONLY JSON:
+{"nama":"","ic":"","dun":"N39 or N40 or N41","cawangan":"","tarikhLahir":"DD/MM/YYYY","tempatLahir":"","noTel":"","jawatan":"","alamat":""}
+Use null if unclear.`;
 
-    const prompt = `Anda adalah pembantu untuk pendaftaran ahli PGRS Keningau (Parti Gerakan Rakyat Sabah).
-Ekstrak maklumat berikut dari gambar borang ini dalam format JSON:
-
-{
-  "nama": "nama penuh",
-  "ic": "nombor kad pengenalan",
-  "dun": "N39 atau N40 atau N41",
-  "cawangan": "nama cawangan",
-  "tarikhLahir": "tarikh lahir (DD/MM/YYYY)",
-  "tempatLahir": "tempat lahir",
-  "noTel": "nombor telefon",
-  "jawatan": "jawatan dalam parti",
-  "alamat": "alamat penuh"
-}
-
-Kalau ada maklumat yang tak jelas, letak null.
-Balas HANYA dengan JSON, tiada penjelasan lain.`;
-
-    const result = await model.generateContent([
+    const result = await callGeminiWithFallback([
       prompt,
       {
         inlineData: {
@@ -131,7 +150,12 @@ Balas HANYA dengan JSON, tiada penjelasan lain.`;
       },
     ]);
 
-    const text = result.response.text();
+    if (!result.success) {
+      return res.status(503).json({ error: result.error });
+    }
+
+    // Parse JSON
+    const text = result.text;
     const cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
     const firstBrace = cleanText.indexOf('{');
     const lastBrace = cleanText.lastIndexOf('}');
@@ -140,7 +164,7 @@ Balas HANYA dengan JSON, tiada penjelasan lain.`;
       : cleanText;
     const data = JSON.parse(jsonText);
 
-    res.json({ success: true, data });
+    res.json({ success: true, data, model: result.model });
   } catch (err) {
     console.error('Error scan:', err);
     res.status(500).json({ error: err.message });
@@ -181,18 +205,9 @@ app.post('/api/save', checkPassword, async (req, res) => {
       valueInputOption: 'USER_ENTERED',
       requestBody: {
         values: [[
-          nextNum,           // A - No Borang
-          noAhli,            // B - No Ahli
-          nama || '',        // C - Nama
-          ic || '',          // D - No KP
-          dun || '',         // E - DUN
-          cawangan || '',    // F - Cawangan
-          tarikhLahir || '', // G - Tarikh Lahir
-          tempatLahir || '', // H - Tempat Lahir
-          noTel || '',       // I - No Tel
-          jawatan || '',     // J - Jawatan
-          alamat || '',      // K - Alamat
-          tarikhDaftar       // L - Tarikh Daftar
+          nextNum, noAhli, nama || '', ic || '', dun || '',
+          cawangan || '', tarikhLahir || '', tempatLahir || '',
+          noTel || '', jawatan || '', alamat || '', tarikhDaftar
         ]],
       },
     });
@@ -254,7 +269,7 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
   console.log(`✅ PGRS Keningau server running on port ${PORT}`);
   console.log(`🔐 Password: ${APP_PASSWORD}`);
-  console.log(`🤖 AI Model: ${GEMINI_MODEL}`);
+  console.log(`⚡ AI Models (fallback): ${MODEL_LIST.join(' → ')}`);
   console.log(`📁 Google Auth: Secret File`);
   console.log(`📊 Sheet range: Sheet1!A:L (12 kolum)`);
 });
