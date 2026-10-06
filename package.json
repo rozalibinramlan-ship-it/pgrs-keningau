@@ -1,20 +1,28 @@
 {
   "name": "pgrs-keningau",
   "version": "1.0.0",
-  "description": "PGRS Keningau - Register Ahli dengan Camera",
+  "description": "Sistem Pendaftaran Ahli PGRS Keningau - N39, N40, N41",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "node server.js"
   },
-  "dependencies": {
-    "express": "^4.19.2",
-    "cors": "^2.8.5",
-    "axios": "^1.6.8",
-    "@google/genai": "^1.0.0",
-    "googleapis": "^140.0.0",
-    "dotenv": "^16.3.1"
-  },
+  "keywords": [
+    "pgrs",
+    "keningau",
+    "register",
+    "parti",
+    "sabah"
+  ],
+  "author": "PGRS Keningau",
+  "license": "MIT",
   "engines": {
     "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "googleapis": "^140.0.0"
   }
 }
