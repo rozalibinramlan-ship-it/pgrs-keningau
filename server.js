@@ -1,6 +1,6 @@
 // ============================================================
-// PGRS KENINGAU — SERVER
-// Register Ahli Parti · N39 · N40 · N41
+// PGRS KENINGAU — SERVER (v2)
+// Struktur Sheet: A-L (12 kolum)
 // ============================================================
 
 const express = require('express');
@@ -25,7 +25,7 @@ const GOOGLE_SHEET_ID = process.env.GOOGLE_SHEET_ID;
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
 // ============================================================
-// GOOGLE SHEETS SETUP (GUNA SECRET FILE)
+// GOOGLE SHEETS SETUP (SECRET FILE)
 // ============================================================
 const auth = new google.auth.GoogleAuth({
   keyFile: '/etc/secrets/google-key.json',
@@ -41,7 +41,6 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(express.static(path.join(__dirname)));
 
-// Password check middleware
 function checkPassword(req, res, next) {
   const pass = req.query.pass || req.body.pass || req.headers['x-app-password'];
   if (pass !== APP_PASSWORD) {
@@ -54,16 +53,14 @@ function checkPassword(req, res, next) {
 // ROUTES
 // ============================================================
 
-// Test password — buka app
+// Test password
 app.get('/api/check-password', (req, res) => {
   const pass = req.query.pass;
-  if (pass === APP_PASSWORD) {
-    return res.json({ success: true });
-  }
+  if (pass === APP_PASSWORD) return res.json({ success: true });
   res.status(401).json({ success: false, error: 'Password salah' });
 });
 
-// Get next number (No. Seterusnya)
+// Get next number (No Borang / No Ahli)
 app.get('/api/next-number', checkPassword, async (req, res) => {
   try {
     const response = await sheets.spreadsheets.values.get({
@@ -71,7 +68,8 @@ app.get('/api/next-number', checkPassword, async (req, res) => {
       range: 'Sheet1!A:A',
     });
     const rows = response.data.values || [];
-    const nextNum = 355001 + Math.max(0, rows.length - 1);
+    const dataRows = rows.length > 1 ? rows.length - 1 : 0;
+    const nextNum = 355001 + dataRows;
     res.json({ success: true, nextNumber: nextNum });
   } catch (err) {
     console.error('Error next-number:', err);
@@ -107,11 +105,13 @@ Ekstrak maklumat berikut dari gambar borang ini dalam format JSON:
 {
   "nama": "nama penuh",
   "ic": "nombor kad pengenalan",
-  "alamat": "alamat penuh",
-  "noTel": "nombor telefon",
   "dun": "N39 atau N40 atau N41",
   "cawangan": "nama cawangan",
-  "jawatan": "jawatan dalam parti (kalau ada)"
+  "tarikhLahir": "tarikh lahir (DD/MM/YYYY)",
+  "tempatLahir": "tempat lahir",
+  "noTel": "nombor telefon",
+  "jawatan": "jawatan dalam parti",
+  "alamat": "alamat penuh"
 }
 
 Kalau ada maklumat yang tak jelas, letak null.
@@ -128,9 +128,13 @@ Balas HANYA dengan JSON, tiada penjelasan lain.`;
     ]);
 
     const text = result.response.text();
-    // Clean JSON from markdown if needed
     const cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
-    const data = JSON.parse(cleanText);
+    const firstBrace = cleanText.indexOf('{');
+    const lastBrace = cleanText.lastIndexOf('}');
+    const jsonText = (firstBrace !== -1 && lastBrace !== -1)
+      ? cleanText.substring(firstBrace, lastBrace + 1)
+      : cleanText;
+    const data = JSON.parse(jsonText);
 
     res.json({ success: true, data });
   } catch (err) {
@@ -142,38 +146,59 @@ Balas HANYA dengan JSON, tiada penjelasan lain.`;
 // Save ahli ke Google Sheet
 app.post('/api/save', checkPassword, async (req, res) => {
   try {
-    const { nama, ic, alamat, noTel, dun, cawangan, jawatan } = req.body;
+    const {
+      nama, ic, dun, cawangan,
+      tarikhLahir, tempatLahir, noTel, jawatan, alamat,
+      noAhliManual
+    } = req.body;
+
     if (!nama || !ic) {
       return res.status(400).json({ error: 'Nama dan IC wajib diisi' });
     }
 
+    // Ambil data sedia ada untuk kira No Borang seterusnya
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: GOOGLE_SHEET_ID,
       range: 'Sheet1!A:A',
     });
     const rows = response.data.values || [];
-    const nextNum = 355001 + Math.max(0, rows.length - 1);
+    const dataRows = rows.length > 1 ? rows.length - 1 : 0;
+    const nextNum = 355001 + dataRows;
 
+    // No Ahli: guna manual kalau ada, kalau tak sama dengan No Borang
+    const noAhli = noAhliManual || nextNum;
+
+    // Tarikh daftar
+    const tarikhDaftar = new Date().toLocaleString('ms-MY', {
+      timeZone: 'Asia/Kuala_Lumpur',
+      day: '2-digit', month: '2-digit', year: 'numeric',
+      hour: '2-digit', minute: '2-digit'
+    });
+
+    // Susunan kolum: A B C D E F G H I J K L
     await sheets.spreadsheets.values.append({
       spreadsheetId: GOOGLE_SHEET_ID,
-      range: 'Sheet1!A:I',
+      range: 'Sheet1!A:L',
       valueInputOption: 'USER_ENTERED',
       requestBody: {
         values: [[
-          nextNum,
-          new Date().toLocaleString('ms-MY', { timeZone: 'Asia/Kuala_Lumpur' }),
-          nama || '',
-          ic || '',
-          alamat || '',
-          noTel || '',
-          dun || '',
-          cawangan || '',
-          jawatan || ''
+          nextNum,           // A - No Borang (auto)
+          noAhli,            // B - No Ahli (auto/manual)
+          nama || '',        // C - Nama
+          ic || '',          // D - No KP
+          dun || '',         // E - DUN
+          cawangan || '',    // F - Cawangan
+          tarikhLahir || '', // G - Tarikh Lahir
+          tempatLahir || '', // H - Tempat Lahir
+          noTel || '',       // I - No Tel
+          jawatan || '',     // J - Jawatan
+          alamat || '',      // K - Alamat
+          tarikhDaftar       // L - Tarikh Daftar (auto)
         ]],
       },
     });
 
-    res.json({ success: true, noAhli: nextNum });
+    res.json({ success: true, noBorang: nextNum, noAhli });
   } catch (err) {
     console.error('Error save:', err);
     res.status(500).json({ error: err.message });
@@ -185,7 +210,7 @@ app.get('/api/list', checkPassword, async (req, res) => {
   try {
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: GOOGLE_SHEET_ID,
-      range: 'Sheet1!A:I',
+      range: 'Sheet1!A:L',
     });
     const rows = response.data.values || [];
     res.json({ success: true, data: rows });
@@ -200,16 +225,16 @@ app.get('/api/stats', checkPassword, async (req, res) => {
   try {
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: GOOGLE_SHEET_ID,
-      range: 'Sheet1!A:I',
+      range: 'Sheet1!A:L',
     });
     const rows = response.data.values || [];
-    const dataRows = rows.slice(1);
+    const dataRows = rows.slice(1); // skip header
 
     const stats = {
       total: dataRows.length,
-      n39: dataRows.filter(r => r[6] === 'N39').length,
-      n40: dataRows.filter(r => r[6] === 'N40').length,
-      n41: dataRows.filter(r => r[6] === 'N41').length,
+      n39: dataRows.filter(r => (r[4] || '').toString().toUpperCase().includes('N39')).length,
+      n40: dataRows.filter(r => (r[4] || '').toString().toUpperCase().includes('N40')).length,
+      n41: dataRows.filter(r => (r[4] || '').toString().toUpperCase().includes('N41')).length,
     };
 
     res.json({ success: true, stats });
@@ -219,9 +244,7 @@ app.get('/api/stats', checkPassword, async (req, res) => {
   }
 });
 
-// ============================================================
-// SERVE register.html
-// ============================================================
+// Serve register.html
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'register.html'));
 });
@@ -233,5 +256,6 @@ app.listen(PORT, () => {
   console.log(`✅ PGRS Keningau server running on port ${PORT}`);
   console.log(`🔐 Password: ${APP_PASSWORD}`);
   console.log(`🤖 AI Model: gemini-2.5-flash`);
-  console.log(`📁 Google Auth: Secret File (/etc/secrets/google-key.json)`);
+  console.log(`📁 Google Auth: Secret File`);
+  console.log(`📊 Sheet range: Sheet1!A:L (12 kolum)`);
 });

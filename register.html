@@ -3,484 +3,471 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PGRS KENINGAU - Register Ahli</title>
+<title>PGRS KENINGAU — Register Ahli Parti</title>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-    background: #050a15;
-    color: #f1f5f9;
-    font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-    padding: 15px;
-    padding-bottom: 30px;
-    min-height: 100vh;
-}
-.header {
-    text-align: center;
-    padding: 20px 0;
-    border-bottom: 1px solid #1f2d42;
-    margin-bottom: 20px;
-}
-.header h1 {
-    color: #fbbf24;
-    font-size: 22px;
-    letter-spacing: 2px;
-    margin-bottom: 5px;
-}
-.header p { color: #38bdf8; font-size: 12px; letter-spacing: 3px; }
-.progress-box {
-    background: rgba(56,189,248,0.08);
-    border: 1px solid #38bdf8;
-    border-radius: 12px;
-    padding: 15px;
-    margin-bottom: 15px;
-}
-.progress-text {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-    font-size: 13px;
-}
-.progress-text strong { color: #fbbf24; }
-.progress-bar {
-    height: 15px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 8px;
-    overflow: hidden;
-}
-.progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #22c55e, #4ade80);
-    width: 0%;
-    transition: width 0.5s;
-}
-.scan-btn {
-    width: 100%;
-    padding: 25px 20px;
-    font-size: 20px;
-    font-weight: 900;
-    border: none;
-    border-radius: 15px;
-    cursor: pointer;
-    margin-bottom: 12px;
-    letter-spacing: 2px;
-    transition: all 0.3s;
-}
-.scan-btn:active { transform: scale(0.98); }
-.scan-btn.borang {
-    background: linear-gradient(135deg, #38bdf8, #0284c7);
-    color: white;
-    box-shadow: 0 0 25px rgba(56,189,248,0.4);
-}
-.scan-btn.ic {
-    background: linear-gradient(135deg, #22c55e, #16a34a);
-    color: white;
-    box-shadow: 0 0 25px rgba(34,197,94,0.4);
-}
-.btn-secondary {
-    width: 100%;
-    padding: 15px;
-    font-size: 14px;
-    background: rgba(56,189,248,0.15);
-    color: #38bdf8;
-    border: 1px solid #38bdf8;
-    border-radius: 12px;
-    cursor: pointer;
-    margin-bottom: 10px;
-    font-weight: 700;
-    letter-spacing: 1px;
-}
-.status-box {
-    background: rgba(34,197,94,0.1);
-    border: 1px solid #22c55e;
-    border-radius: 12px;
-    padding: 15px;
-    margin-bottom: 15px;
-    display: none;
-}
-.status-box.show { display: block; }
-.status-title {
-    color: #4ade80;
-    font-size: 16px;
-    font-weight: 900;
-    margin-bottom: 10px;
-}
-.status-item {
-    font-size: 14px;
-    line-height: 1.8;
-    color: #cbd5e1;
-}
-.status-item strong { color: #fbbf24; }
-.loading {
-    text-align: center;
-    padding: 30px;
-    display: none;
-}
-.loading.show { display: block; }
-.spinner {
-    border: 4px solid rgba(255,255,255,0.1);
-    border-top: 4px solid #38bdf8;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: spin 1s linear infinite;
-    margin: 0 auto 15px;
-}
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-input[type="file"] { display: none; }
-.modal {
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.85);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
-.modal.show { display: flex; }
-.modal-content {
-    background: linear-gradient(135deg, #0d1526, #101c33);
-    border: 2px solid #fbbf24;
-    border-radius: 15px;
-    padding: 25px;
-    max-width: 400px;
-    width: 100%;
-}
-.modal-title {
-    color: #fbbf24;
-    font-size: 18px;
-    font-weight: 900;
-    margin-bottom: 15px;
-    text-align: center;
-}
-.modal-info {
-    background: rgba(0,0,0,0.3);
-    padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    font-size: 13px;
-}
-.modal-info strong { color: #38bdf8; }
-.dun-options {
-    display: grid;
-    gap: 10px;
-    margin-bottom: 15px;
-}
-.dun-btn {
-    padding: 15px;
-    background: rgba(56,189,248,0.1);
-    border: 1px solid #38bdf8;
-    border-radius: 10px;
-    color: white;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    text-align: left;
-}
-.dun-btn:active { background: rgba(56,189,248,0.3); }
-.footer {
-    text-align: center;
-    padding: 20px;
-    color: #64748b;
-    font-size: 11px;
-    letter-spacing: 2px;
-}
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #0a1929 0%, #1a3a52 100%); color: #e8f4f8; min-height: 100vh; padding: 16px; padding-bottom: 80px; }
+  .header { text-align: center; padding: 20px 0; border-bottom: 1px solid rgba(100,200,255,0.2); margin-bottom: 20px; }
+  .header h1 { font-size: 26px; color: #ffc107; letter-spacing: 2px; margin-bottom: 6px; }
+  .header p { font-size: 12px; color: #64b5f6; letter-spacing: 4px; }
+  .progress-box { background: rgba(30,80,120,0.4); border: 1px solid rgba(100,200,255,0.3); border-radius: 12px; padding: 16px; margin-bottom: 20px; position: relative; padding-bottom: 24px; }
+  .progress-box .label { font-size: 13px; color: #90caf9; }
+  .progress-box .value { font-size: 18px; font-weight: bold; color: #ffc107; }
+  .progress-bar { height: 6px; background: rgba(0,0,0,0.3); border-radius: 3px; margin-top: 8px; overflow: hidden; position: absolute; left: 16px; right: 16px; bottom: 8px; }
+  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, #ffc107, #ff9800); width: 0%; transition: width 0.5s; }
+  .btn-main { width: 100%; padding: 18px; border: none; border-radius: 12px; font-size: 17px; font-weight: bold; letter-spacing: 2px; cursor: pointer; margin-bottom: 12px; transition: transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .btn-main:active { transform: scale(0.98); }
+  .btn-scan { background: linear-gradient(135deg, #2196f3, #1976d2); color: white; box-shadow: 0 4px 15px rgba(33,150,243,0.4); font-size: 20px; padding: 24px; }
+  .btn-secondary { background: rgba(30,80,120,0.5); color: #90caf9; border: 1px solid rgba(100,200,255,0.3); font-size: 14px; padding: 14px; }
+  .btn-save { background: linear-gradient(135deg, #4caf50, #388e3c); color: white; box-shadow: 0 4px 15px rgba(76,175,80,0.4); }
+  .btn-cancel { background: rgba(150,50,50,0.3); color: #ef9a9a; border: 1px solid rgba(200,100,100,0.3); }
+  .section { background: rgba(20,50,80,0.5); border: 1px solid rgba(100,200,255,0.2); border-radius: 12px; padding: 18px; margin-bottom: 16px; display: none; }
+  .section.active { display: block; }
+  .section-title { font-size: 14px; color: #ffc107; letter-spacing: 2px; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,193,7,0.2); }
+  .form-group { margin-bottom: 14px; }
+  .form-group label { display: block; font-size: 12px; color: #90caf9; margin-bottom: 6px; letter-spacing: 1px; }
+  .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px 14px; background: rgba(0,0,0,0.3); border: 1px solid rgba(100,200,255,0.3); border-radius: 8px; color: #e8f4f8; font-size: 15px; font-family: inherit; outline: none; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #ffc107; }
+  .form-group textarea { resize: vertical; min-height: 60px; }
+  .file-input-wrap { position: relative; overflow: hidden; display: inline-block; width: 100%; }
+  .file-input-wrap input[type=file] { position: absolute; left: -9999px; }
+  .file-input-label { display: block; padding: 14px; background: rgba(0,0,0,0.3); border: 2px dashed rgba(100,200,255,0.4); border-radius: 8px; text-align: center; cursor: pointer; color: #90caf9; font-size: 14px; }
+  .preview-img { max-width: 100%; border-radius: 8px; margin-top: 10px; display: none; }
+  .loading { display: none; text-align: center; padding: 20px; color: #ffc107; }
+  .spinner { display: inline-block; width: 30px; height: 30px; border: 3px solid rgba(255,193,7,0.3); border-top-color: #ffc107; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 10px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .footer { text-align: center; font-size: 11px; color: #64b5f6; letter-spacing: 2px; padding: 20px 0; opacity: 0.6; }
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: #4caf50; color: white; padding: 14px 24px; border-radius: 8px; font-size: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); transition: transform 0.3s; z-index: 1000; max-width: 90%; }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.error { background: #e53935; }
 </style>
 </head>
 <body>
 
 <div class="header">
-    <h1>📷 PGRS KENINGAU</h1>
-    <p>REGISTER AHLI PARTI</p>
+  <h1>📷 PGRS KENINGAU</h1>
+  <p>REGISTER AHLI PARTI</p>
 </div>
 
 <div class="progress-box">
-    <div class="progress-text">
-        <span>Progress: <strong id="progress-count">0</strong> / 400</span>
-        <span>No. Seterusnya: <strong id="next-no">-</strong></span>
+  <div style="display:flex; justify-content:space-between;">
+    <div><div class="label">Progress</div><div class="value" id="progressText">0 / 400</div></div>
+    <div style="text-align:right;"><div class="label">No. Seterusnya</div><div class="value" id="nextNumber">-</div></div>
+  </div>
+  <div class="progress-bar"><div class="progress-bar-fill" id="progressFill"></div></div>
+</div>
+
+<button class="btn-main btn-scan" onclick="showScan()">📷 SCAN BORANG</button>
+<button class="btn-main btn-secondary" onclick="downloadExcel()">📥 DOWNLOAD EXCEL</button>
+<button class="btn-main btn-secondary" onclick="printSenarai()">🖨️ PRINT SENARAI</button>
+<button class="btn-main btn-secondary" onclick="showStatistik()">📊 STATISTIK</button>
+
+<div class="section" id="sectionScan">
+  <div class="section-title">📷 SCAN BORANG</div>
+  <div class="form-group">
+    <label>Gambar Borang</label>
+    <div class="file-input-wrap">
+      <input type="file" id="gambarBorang" accept="image/*" capture="environment" onchange="previewImage(event)">
+      <label for="gambarBorang" class="file-input-label" id="fileLabel">📸 Tekan untuk ambil gambar</label>
     </div>
-    <div class="progress-bar">
-        <div class="progress-fill" id="progress-fill"></div>
-    </div>
+    <img id="previewImg" class="preview-img" alt="Preview">
+  </div>
+  <div class="loading" id="loading"><div class="spinner"></div><div>Sedang scan borang...</div></div>
+  <button class="btn-main btn-save" onclick="scanBorang()" id="btnScan">🔍 SCAN & ISI AUTO</button>
 </div>
 
-<input type="file" accept="image/*" capture="environment" id="camera-borang" onchange="handleScanBorang(this)">
-<button class="scan-btn borang" onclick="document.getElementById('camera-borang').click()">
-    📷 SCAN BORANG
-</button>
-
-<div class="loading" id="loading">
-    <div class="spinner"></div>
-    <p id="loading-text">AI tengah baca...</p>
+<div class="section" id="sectionForm">
+  <div class="section-title">📝 MAKLUMAT AHLI</div>
+  <div class="form-group"><label>No. Borang</label><input type="text" id="noBorang" readonly></div>
+  <div class="form-group"><label>No. Ahli</label><input type="text" id="noAhli" placeholder="Auto atau manual" autocomplete="off"></div>
+  <div class="form-group"><label>Nama Penuh *</label><input type="text" id="nama" autocomplete="off"></div>
+  <div class="form-group"><label>No. Kad Pengenalan *</label><input type="text" id="ic" inputmode="numeric" placeholder="900101-12-3456" autocomplete="off"></div>
+  <div class="form-group"><label>DUN *</label>
+    <select id="dun">
+      <option value="">-- Pilih DUN --</option>
+      <option value="N39">N39 - TAMBUNAN</option>
+      <option value="N40">N40 - BINGKOR</option>
+      <option value="N41">N41 - LIAWAN</option>
+    </select>
+  </div>
+  <div class="form-group"><label>Cawangan</label><input type="text" id="cawangan" autocomplete="off"></div>
+  <div class="form-group"><label>Tarikh Lahir</label><input type="text" id="tarikhLahir" placeholder="DD/MM/YYYY" autocomplete="off"></div>
+  <div class="form-group"><label>Tempat Lahir</label><input type="text" id="tempatLahir" autocomplete="off"></div>
+  <div class="form-group"><label>No. Telefon</label><input type="text" id="noTel" inputmode="numeric" placeholder="0123456789" autocomplete="off"></div>
+  <div class="form-group"><label>Jawatan</label><input type="text" id="jawatan" autocomplete="off"></div>
+  <div class="form-group"><label>Alamat</label><textarea id="alamat" rows="2"></textarea></div>
+  <button class="btn-main btn-save" onclick="simpanAhli()" id="btnSave">💾 SIMPAN AHLI</button>
+  <button class="btn-main btn-cancel" onclick="resetForm()">❌ BATAL</button>
 </div>
 
-<div id="ic-section" style="display:none;">
-    <input type="file" accept="image/*" capture="environment" id="camera-ic" onchange="handleScanIC(this)">
-    <button class="scan-btn ic" onclick="document.getElementById('camera-ic').click()">
-        📷 SCAN IC
-    </button>
+<div class="section" id="sectionStat">
+  <div class="section-title">📊 STATISTIK</div>
+  <div id="statContent" style="padding:10px 0; line-height:2;">Sedang loading...</div>
 </div>
 
-<div class="status-box" id="status-box">
-    <div class="status-title" id="status-title">✅ BORANG SELESAI</div>
-    <div class="status-item" id="status-content"></div>
-    <button class="scan-btn borang" style="margin-top:15px; padding:15px; font-size:16px;" onclick="nextScan()">
-        📷 SCAN SETERUSNYA
-    </button>
-</div>
-
-<button class="btn-secondary" onclick="downloadExcel()">📥 DOWNLOAD EXCEL</button>
-<button class="btn-secondary" onclick="printSenarai()">🖨️ PRINT SENARAI</button>
-<button class="btn-secondary" onclick="viewStats()">📊 STATISTIK</button>
-
-<div class="footer">
-    PGRS KENINGAU · N39 · N40 · N41
-</div>
-
-<div class="modal" id="modal-dun">
-    <div class="modal-content">
-        <div class="modal-title">⚠️ KAMPUNG BARU DIKESAN</div>
-        <div class="modal-info">
-            Alamat: <strong id="modal-alamat">-</strong><br>
-            Kampung: <strong id="modal-kampung">-</strong>
-        </div>
-        <p style="margin-bottom:10px; font-size:13px;">Pilih DUN:</p>
-        <div class="dun-options">
-            <button class="dun-btn" onclick="selectDUN('N41 LIAWAN')">
-                📍 N41 LIAWAN
-            </button>
-            <button class="dun-btn" onclick="selectDUN('N40 BINGKOR')">
-                📍 N40 BINGKOR
-            </button>
-            <button class="dun-btn" onclick="selectDUN('N39 TAMBUNAN')">
-                📍 N39 TAMBUNAN
-            </button>
-        </div>
-    </div>
-</div>
+<div class="footer">PGRS KENINGAU · N39 · N40 · N41</div>
+<div class="toast" id="toast"></div>
 
 <script>
-let currentBorangData = null;
-let currentICData = null;
-let learnKeyword = null;
+// ============================================================
+// GLOBAL
+// ============================================================
+const URL_PARAMS = new URLSearchParams(window.location.search);
+const PASSWORD = URL_PARAMS.get('pass') || '';
 
-const urlParams = new URLSearchParams(window.location.search);
-const APP_PASS = urlParams.get('pass') || 'pgrs-keningau';
-
-async function handleScanBorang(input) {
-    const file = input.files[0];
-    if (!file) return;
-    
-    document.getElementById('loading').classList.add('show');
-    document.getElementById('loading-text').innerText = 'AI tengah baca borang...';
-    document.getElementById('status-box').classList.remove('show');
-    document.getElementById('ic-section').style.display = 'none';
-    
-    const reader = new FileReader();
-    reader.onload = async () => {
-        const base64 = reader.result.split(',')[1];
-        
-        try {
-            const res = await fetch(`/api/scan-borang?pass=${APP_PASS}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ imageBase64: base64 })
-            });
-            
-            const result = await res.json();
-            document.getElementById('loading').classList.remove('show');
-            
-            if (result.status === 'success') {
-                currentBorangData = result.data;
-                showStatusBorang(result.data);
-                
-                if (!result.data.dun_detected) {
-                    showModalDUN(result.data.alamat);
-                } else {
-                    document.getElementById('ic-section').style.display = 'block';
-                }
-            } else {
-                alert('❌ Error: ' + result.message);
-            }
-        } catch (e) {
-            document.getElementById('loading').classList.remove('show');
-            alert('❌ Ralat: ' + e.message);
-        }
-        
-        input.value = '';
-    };
-    reader.readAsDataURL(file);
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isError ? ' error' : '');
+  setTimeout(() => t.className = 'toast', 3000);
 }
 
-function showStatusBorang(data) {
-    const box = document.getElementById('status-box');
-    const content = document.getElementById('status-content');
-    
-    content.innerHTML = `
-        ✅ <strong>Borang ${data.no_borang || '?'}</strong><br>
-        👤 ${data.nama || '-'}<br>
-        📍 ${data.bahagian || '?'} · ${data.cawangan || '?'}<br>
-        <br>
-        📷 <strong>Sekarang scan IC</strong>
-    `;
-    
-    box.classList.add('show');
+// ============================================================
+// UI CONTROL
+// ============================================================
+function hideAllSections() {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
 }
 
-async function handleScanIC(input) {
-    const file = input.files[0];
-    if (!file) return;
-    
-    document.getElementById('loading').classList.add('show');
-    document.getElementById('loading-text').innerText = 'AI tengah baca IC...';
-    
-    const reader = new FileReader();
-    reader.onload = async () => {
-        const base64 = reader.result.split(',')[1];
-        
-        try {
-            const res = await fetch(`/api/scan-ic?pass=${APP_PASS}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ imageBase64: base64 })
-            });
-            
-            const result = await res.json();
-            document.getElementById('loading').classList.remove('show');
-            
-            if (result.status === 'success') {
-                currentICData = result.data;
-                const combined = { ...currentBorangData, ...result.data };
-                await saveAhli(combined, currentBorangData.dun_detected || null, learnKeyword);
-            } else {
-                alert('❌ Error: ' + result.message);
-            }
-        } catch (e) {
-            document.getElementById('loading').classList.remove('show');
-            alert('❌ Ralat: ' + e.message);
-        }
-        
-        input.value = '';
-    };
-    reader.readAsDataURL(file);
+function showScan() {
+  hideAllSections();
+  document.getElementById('sectionScan').classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function showModalDUN(alamat) {
-    document.getElementById('modal-alamat').innerText = alamat || '-';
-    const parts = (alamat || '').split(',');
-    const kampung = parts[0] ? parts[0].replace(/kg\.|kampung/gi, '').trim() : '';
-    document.getElementById('modal-kampung').innerText = kampung;
-    learnKeyword = kampung;
-    document.getElementById('modal-dun').classList.add('show');
+function showForm() {
+  hideAllSections();
+  document.getElementById('sectionForm').classList.add('active');
 }
 
-async function selectDUN(dun) {
-    document.getElementById('modal-dun').classList.remove('show');
-    if (currentBorangData) {
-        currentBorangData.dun_detected = dun;
-        currentBorangData.auto_learned = true;
-        document.getElementById('ic-section').style.display = 'block';
+function showStatistik() {
+  hideAllSections();
+  document.getElementById('sectionStat').classList.add('active');
+  loadStatistik();
+}
+
+function resetForm() {
+  ['noBorang','noAhli','nama','ic','dun','cawangan','tarikhLahir','tempatLahir','noTel','jawatan','alamat'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('previewImg').style.display = 'none';
+  document.getElementById('gambarBorang').value = '';
+  document.getElementById('fileLabel').textContent = '📸 Tekan untuk ambil gambar';
+  hideAllSections();
+  showScan();
+}
+
+// ============================================================
+// PREVIEW IMAGE
+// ============================================================
+function previewImage(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById('previewImg');
+    img.src = e.target.result;
+    img.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+  document.getElementById('fileLabel').textContent = '✅ ' + file.name;
+}
+
+// ============================================================
+// SCAN BORANG
+// ============================================================
+async function scanBorang() {
+  const fileInput = document.getElementById('gambarBorang');
+  const file = fileInput.files[0];
+  if (!file) { showToast('Sila ambil gambar borang dulu', true); return; }
+
+  const btnScan = document.getElementById('btnScan');
+  const loading = document.getElementById('loading');
+  btnScan.disabled = true;
+  loading.style.display = 'block';
+
+  try {
+    const base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+
+    const res = await fetch('/api/scan?pass=' + encodeURIComponent(PASSWORD), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image: base64, mimeType: file.type || 'image/jpeg' })
+    });
+
+    const result = await res.json();
+    console.log('Server response:', result);
+
+    if (!result.success) {
+      showToast('Ralat: ' + (result.error || 'Gagal scan'), true);
+      return;
     }
-}
 
-async function saveAhli(data, selectedDun, keyword) {
-    try {
-        const res = await fetch(`/api/save-ahli?pass=${APP_PASS}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                data: data,
-                selected_dun: selectedDun,
-                learn_keyword: keyword
-            })
-        });
-        
-        const result = await res.json();
-        
-        if (result.status === 'success') {
-            const content = document.getElementById('status-content');
-            content.innerHTML = `
-                ✅ <strong>BORANG ${data.no_borang} SELESAI!</strong><br>
-                <br>
-                👤 ${data.nama}<br>
-                📇 ${data.ic_no}<br>
-                📍 DUN: ${data.dun || '-'}<br>
-                🏠 Cawangan: ${data.cawangan || '-'}<br>
-                👥 ${data.jantina} · ${data.jenis_keahlian}<br>
-                📱 ${data.phone || '-'}<br>
-                <br>
-                💾 <strong>Saved to Google Sheets</strong>
-            `;
-            
-            updateProgress();
-            document.getElementById('ic-section').style.display = 'none';
-        }
-    } catch (e) {
-        alert('Save error: ' + e.message);
+    // Parse JSON selamat
+    let dataObj = result.data;
+    if (typeof dataObj === 'string') {
+      let raw = dataObj.replace(/```json/g, '').replace(/```/g, '').trim();
+      const fb = raw.indexOf('{');
+      const lb = raw.lastIndexOf('}');
+      if (fb !== -1 && lb !== -1) raw = raw.substring(fb, lb + 1);
+      try { dataObj = JSON.parse(raw); }
+      catch (e) { showToast('AI format salah', true); return; }
     }
+    console.log('Parsed data:', dataObj);
+
+    // Clean fields
+    let nama = (dataObj.nama || '').toString().trim();
+    let icRaw = (dataObj.ic || '').toString();
+    let icDigits = icRaw.replace(/\D/g, '');
+    let ic = icDigits;
+    if (icDigits.length === 12) ic = icDigits.replace(/(\d{6})(\d{2})(\d{4})/, '$1-$2-$3');
+    let dunRaw = (dataObj.dun || '').toString().toUpperCase().trim();
+    let cawangan = (dataObj.cawangan || '').toString().trim();
+    let tarikhLahir = (dataObj.tarikhLahir || '').toString().trim();
+    let tempatLahir = (dataObj.tempatLahir || '').toString().trim();
+    let noTel = (dataObj.noTel || '').toString().replace(/\D/g, '');
+    let jawatan = (dataObj.jawatan || '').toString().trim();
+    let alamat = (dataObj.alamat || '').toString().trim();
+
+    // Auto-detect DUN
+    let dun = '';
+    if (/N\s*39|TAMBUNAN/i.test(dunRaw)) dun = 'N39';
+    else if (/N\s*40|BINGKOR/i.test(dunRaw)) dun = 'N40';
+    else if (/N\s*41|LIAWAN/i.test(dunRaw)) dun = 'N41';
+    else if (['N39','N40','N41'].includes(dunRaw)) dun = dunRaw;
+
+    // Get next number
+    const numRes = await fetch('/api/next-number?pass=' + encodeURIComponent(PASSWORD));
+    const numData = await numRes.json();
+    const nextNum = numData.nextNumber || '-';
+
+    // Fill form
+    document.getElementById('noBorang').value = nextNum;
+    document.getElementById('noAhli').value = '';
+    document.getElementById('nama').value = nama;
+    document.getElementById('ic').value = ic;
+    document.getElementById('dun').value = dun;
+    document.getElementById('cawangan').value = cawangan;
+    document.getElementById('tarikhLahir').value = tarikhLahir;
+    document.getElementById('tempatLahir').value = tempatLahir;
+    document.getElementById('noTel').value = noTel;
+    document.getElementById('jawatan').value = jawatan;
+    document.getElementById('alamat').value = alamat;
+
+    showForm();
+    showToast('✅ Scan berjaya! Sila semak data.');
+  } catch (err) {
+    console.error('Scan error:', err);
+    showToast('Ralat: ' + err.message, true);
+  } finally {
+    btnScan.disabled = false;
+    loading.style.display = 'none';
+  }
 }
 
-function nextScan() {
-    document.getElementById('status-box').classList.remove('show');
-    document.getElementById('ic-section').style.display = 'none';
-    currentBorangData = null;
-    currentICData = null;
-    learnKeyword = null;
-    document.getElementById('camera-borang').click();
-}
+// ============================================================
+// SIMPAN AHLI
+// ============================================================
+async function simpanAhli() {
+  const nama = document.getElementById('nama').value.trim();
+  const ic = document.getElementById('ic').value.trim();
+  const dun = document.getElementById('dun').value;
+  const noAhliManual = document.getElementById('noAhli').value.trim();
 
-let scanCount = parseInt(localStorage.getItem('scanCount') || '0');
+  if (!nama || !ic || !dun) {
+    showToast('Nama, IC, dan DUN wajib diisi', true);
+    return;
+  }
 
-function updateProgress() {
-    scanCount++;
-    localStorage.setItem('scanCount', scanCount);
-    const total = 400;
-    const percent = (scanCount / total) * 100;
-    document.getElementById('progress-count').innerText = scanCount;
-    document.getElementById('progress-fill').style.width = percent + '%';
-    document.getElementById('next-no').innerText = 355001 + scanCount;
-}
+  const btnSave = document.getElementById('btnSave');
+  btnSave.disabled = true;
+  btnSave.textContent = '⏳ Menyimpan...';
 
-function downloadExcel() {
-    window.open(`/api/download-excel?pass=${APP_PASS}`, '_blank');
-}
+  try {
+    const res = await fetch('/api/save?pass=' + encodeURIComponent(PASSWORD), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nama: nama,
+        ic: ic,
+        dun: dun,
+        cawangan: document.getElementById('cawangan').value.trim(),
+        tarikhLahir: document.getElementById('tarikhLahir').value.trim(),
+        tempatLahir: document.getElementById('tempatLahir').value.trim(),
+        noTel: document.getElementById('noTel').value.trim(),
+        jawatan: document.getElementById('jawatan').value.trim(),
+        alamat: document.getElementById('alamat').value.trim(),
+        noAhliManual: noAhliManual
+      })
+    });
 
-function printSenarai() {
-    window.open(`/api/print-view?pass=${APP_PASS}`, '_blank');
-}
+    const result = await res.json();
+    console.log('Save response:', result);
 
-async function viewStats() {
-    try {
-        const res = await fetch(`/api/ahli-list?pass=${APP_PASS}`);
-        const result = await res.json();
-        
-        if (result.status === 'success') {
-            const total = result.total || 0;
-            const byDUN = {};
-            (result.ahli || []).forEach(a => {
-                const dun = a.dun || 'UNKNOWN';
-                byDUN[dun] = (byDUN[dun] || 0) + 1;
-            });
-            
-            let statsText = `📊 STATISTIK\n\nTotal: ${total} ahli\n\n`;
-            for (const [dun, count] of Object.entries(byDUN)) {
-                statsText += `${dun}: ${count}\n`;
-            }
-            
-            alert(statsText);
-        }
-    } catch (e) {
-        alert('Error: ' + e.message);
+    if (result.success) {
+      showToast('✅ Berjaya simpan! No. Borang: ' + result.noBorang);
+      setTimeout(() => {
+        resetForm();
+        loadNextNumber();
+        loadProgress();
+      }, 1500);
+    } else {
+      showToast('Ralat: ' + (result.error || 'Gagal simpan'), true);
     }
+  } catch (err) {
+    console.error('Save error:', err);
+    showToast('Ralat: ' + err.message, true);
+  } finally {
+    btnSave.disabled = false;
+    btnSave.textContent = '💾 SIMPAN AHLI';
+  }
 }
 
-document.getElementById('progress-count').innerText = scanCount;
-document.getElementById('progress-fill').style.width = ((scanCount / 400) * 100) + '%';
-document.getElementById('next-no').innerText = 355001 + scanCount;
+// ============================================================
+// LOAD NEXT NUMBER
+// ============================================================
+async function loadNextNumber() {
+  try {
+    const res = await fetch('/api/next-number?pass=' + encodeURIComponent(PASSWORD));
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById('nextNumber').textContent = data.nextNumber;
+    }
+  } catch (err) { console.error('Load next number error:', err); }
+}
+
+// ============================================================
+// LOAD PROGRESS
+// ============================================================
+async function loadProgress() {
+  try {
+    const res = await fetch('/api/stats?pass=' + encodeURIComponent(PASSWORD));
+    const data = await res.json();
+    if (data.success) {
+      const total = data.stats.total;
+      const target = 400;
+      document.getElementById('progressText').textContent = total + ' / ' + target;
+      const percent = Math.min(100, (total / target) * 100);
+      document.getElementById('progressFill').style.width = percent + '%';
+    }
+  } catch (err) { console.error('Load progress error:', err); }
+}
+
+// ============================================================
+// LOAD STATISTIK
+// ============================================================
+async function loadStatistik() {
+  const content = document.getElementById('statContent');
+  content.innerHTML = 'Sedang loading...';
+  try {
+    const res = await fetch('/api/stats?pass=' + encodeURIComponent(PASSWORD));
+    const data = await res.json();
+    if (data.success) {
+      const s = data.stats;
+      content.innerHTML = `
+        <div style="font-size:16px; padding:8px 0;"><strong>Total Ahli:</strong> <span style="color:#ffc107; font-size:22px;">${s.total}</span></div>
+        <div style="padding:8px 0;">📍 N39 Tambunan: <strong>${s.n39}</strong></div>
+        <div style="padding:8px 0;">📍 N40 Bingkor: <strong>${s.n40}</strong></div>
+        <div style="padding:8px 0;">📍 N41 Liawan: <strong>${s.n41}</strong></div>
+      `;
+    } else {
+      content.innerHTML = '❌ Gagal load statistik';
+    }
+  } catch (err) {
+    content.innerHTML = '❌ Ralat: ' + err.message;
+  }
+}
+
+// ============================================================
+// DOWNLOAD EXCEL (CSV)
+// ============================================================
+async function downloadExcel() {
+  try {
+    const res = await fetch('/api/list?pass=' + encodeURIComponent(PASSWORD));
+    const data = await res.json();
+    if (!data.success || !data.data || data.data.length === 0) {
+      showToast('Tiada data untuk download', true);
+      return;
+    }
+    const csv = data.data.map(row =>
+      row.map(cell => `"${(cell || '').toString().replace(/"/g, '""')}"`).join(',')
+    ).join('\n');
+    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'PGRS-Keningau-Ahli-' + new Date().toISOString().slice(0,10) + '.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('✅ Download berjaya');
+  } catch (err) {
+    showToast('Ralat: ' + err.message, true);
+  }
+}
+
+// ============================================================
+// PRINT SENARAI
+// ============================================================
+async function printSenarai() {
+  try {
+    const res = await fetch('/api/list?pass=' + encodeURIComponent(PASSWORD));
+    const data = await res.json();
+    if (!data.success || !data.data || data.data.length === 0) {
+      showToast('Tiada data untuk print', true);
+      return;
+    }
+    const rows = data.data;
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+      <html><head><title>Senarai Ahli PGRS Keningau</title>
+      <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        h1 { color: #ffc107; text-align: center; }
+        table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        th, td { border: 1px solid #999; padding: 5px; text-align: left; }
+        th { background: #1a3a52; color: white; }
+        tr:nth-child(even) { background: #f5f5f5; }
+      </style></head><body>
+        <h1>PGRS KENINGAU — Senarai Ahli</h1>
+        <p>Tarikh: ${new Date().toLocaleString('ms-MY')}</p>
+        <table>
+          <thead><tr>
+            <th>No Borang</th><th>No Ahli</th><th>Nama</th><th>No KP</th>
+            <th>DUN</th><th>Cawangan</th><th>Tarikh Lahir</th><th>Tempat Lahir</th>
+            <th>No Tel</th><th>Jawatan</th><th>Alamat</th><th>Tarikh Daftar</th>
+          </tr></thead>
+          <tbody>
+            ${rows.slice(1).map(r => '<tr>' + r.map(c => `<td>${c || ''}</td>`).join('') + '</tr>').join('')}
+          </tbody>
+        </table>
+      </body></html>
+    `);
+    printWindow.document.close();
+    setTimeout(() => printWindow.print(), 500);
+  } catch (err) {
+    showToast('Ralat: ' + err.message, true);
+  }
+}
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('DOMContentLoaded', () => {
+  console.log('PGRS Keningau loaded. Password:', PASSWORD ? '✅' : '❌');
+  loadNextNumber();
+  loadProgress();
+  showScan();
+});
 </script>
+
 </body>
 </html>
