@@ -1,6 +1,7 @@
 // ============================================================
-// PGRS KENINGAU — SERVER (v2)
-// Struktur Sheet: A-L (12 kolum)
+// PGRS KENINGAU — SERVER (v3)
+// Model: gemini-3.8-flash
+// Sheet: A-L (12 kolum)
 // ============================================================
 
 const express = require('express');
@@ -23,6 +24,9 @@ const GOOGLE_SHEET_ID = process.env.GOOGLE_SHEET_ID;
 // GEMINI AI SETUP
 // ============================================================
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+
+// Model terkini — Google recommend
+const GEMINI_MODEL = 'gemini-3.8-flash';
 
 // ============================================================
 // GOOGLE SHEETS SETUP (SECRET FILE)
@@ -80,9 +84,9 @@ app.get('/api/next-number', checkPassword, async (req, res) => {
 // Test AI
 app.get('/api/test-ai', checkPassword, async (req, res) => {
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const model = genAI.getGenerativeModel({ model: GEMINI_MODEL });
     const result = await model.generateContent('Balas dengan: OK');
-    res.json({ success: true, reply: result.response.text() });
+    res.json({ success: true, model: GEMINI_MODEL, reply: result.response.text() });
   } catch (err) {
     console.error('Error test-ai:', err);
     res.status(500).json({ error: err.message });
@@ -97,7 +101,7 @@ app.post('/api/scan', checkPassword, async (req, res) => {
       return res.status(400).json({ error: 'Tiada gambar dihantar' });
     }
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const model = genAI.getGenerativeModel({ model: GEMINI_MODEL });
 
     const prompt = `Anda adalah pembantu untuk pendaftaran ahli PGRS Keningau (Parti Gerakan Rakyat Sabah).
 Ekstrak maklumat berikut dari gambar borang ini dalam format JSON:
@@ -156,7 +160,6 @@ app.post('/api/save', checkPassword, async (req, res) => {
       return res.status(400).json({ error: 'Nama dan IC wajib diisi' });
     }
 
-    // Ambil data sedia ada untuk kira No Borang seterusnya
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: GOOGLE_SHEET_ID,
       range: 'Sheet1!A:A',
@@ -164,26 +167,22 @@ app.post('/api/save', checkPassword, async (req, res) => {
     const rows = response.data.values || [];
     const dataRows = rows.length > 1 ? rows.length - 1 : 0;
     const nextNum = 355001 + dataRows;
-
-    // No Ahli: guna manual kalau ada, kalau tak sama dengan No Borang
     const noAhli = noAhliManual || nextNum;
 
-    // Tarikh daftar
     const tarikhDaftar = new Date().toLocaleString('ms-MY', {
       timeZone: 'Asia/Kuala_Lumpur',
       day: '2-digit', month: '2-digit', year: 'numeric',
       hour: '2-digit', minute: '2-digit'
     });
 
-    // Susunan kolum: A B C D E F G H I J K L
     await sheets.spreadsheets.values.append({
       spreadsheetId: GOOGLE_SHEET_ID,
       range: 'Sheet1!A:L',
       valueInputOption: 'USER_ENTERED',
       requestBody: {
         values: [[
-          nextNum,           // A - No Borang (auto)
-          noAhli,            // B - No Ahli (auto/manual)
+          nextNum,           // A - No Borang
+          noAhli,            // B - No Ahli
           nama || '',        // C - Nama
           ic || '',          // D - No KP
           dun || '',         // E - DUN
@@ -193,7 +192,7 @@ app.post('/api/save', checkPassword, async (req, res) => {
           noTel || '',       // I - No Tel
           jawatan || '',     // J - Jawatan
           alamat || '',      // K - Alamat
-          tarikhDaftar       // L - Tarikh Daftar (auto)
+          tarikhDaftar       // L - Tarikh Daftar
         ]],
       },
     });
@@ -228,7 +227,7 @@ app.get('/api/stats', checkPassword, async (req, res) => {
       range: 'Sheet1!A:L',
     });
     const rows = response.data.values || [];
-    const dataRows = rows.slice(1); // skip header
+    const dataRows = rows.slice(1);
 
     const stats = {
       total: dataRows.length,
@@ -255,7 +254,7 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
   console.log(`✅ PGRS Keningau server running on port ${PORT}`);
   console.log(`🔐 Password: ${APP_PASSWORD}`);
-  console.log(`🤖 AI Model: gemini-2.5-flash`);
+  console.log(`🤖 AI Model: ${GEMINI_MODEL}`);
   console.log(`📁 Google Auth: Secret File`);
   console.log(`📊 Sheet range: Sheet1!A:L (12 kolum)`);
 });
