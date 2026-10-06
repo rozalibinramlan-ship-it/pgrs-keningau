@@ -18,10 +18,6 @@ const PORT = process.env.PORT || 3000;
 const APP_PASSWORD = process.env.APP_PASSWORD || 'pgrs-keningau';
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GOOGLE_SHEET_ID = process.env.GOOGLE_SHEET_ID;
-const GOOGLE_SERVICE_ACCOUNT_EMAIL = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
-const GOOGLE_PRIVATE_KEY = process.env.GOOGLE_PRIVATE_KEY
-  ? process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n')
-  : '';
 
 // ============================================================
 // GEMINI AI SETUP
@@ -29,14 +25,12 @@ const GOOGLE_PRIVATE_KEY = process.env.GOOGLE_PRIVATE_KEY
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
 // ============================================================
-// GOOGLE SHEETS SETUP
+// GOOGLE SHEETS SETUP (GUNA SECRET FILE)
 // ============================================================
-const auth = new google.auth.JWT(
-  GOOGLE_SERVICE_ACCOUNT_EMAIL,
-  null,
-  GOOGLE_PRIVATE_KEY,
-  ['https://www.googleapis.com/auth/spreadsheets']
-);
+const auth = new google.auth.GoogleAuth({
+  keyFile: '/etc/secrets/google-key.json',
+  scopes: ['https://www.googleapis.com/auth/spreadsheets']
+});
 
 const sheets = google.sheets({ version: 'v4', auth });
 
@@ -166,15 +160,15 @@ app.post('/api/save', checkPassword, async (req, res) => {
       valueInputOption: 'USER_ENTERED',
       requestBody: {
         values: [[
-          nextNum,                  // A - No. Ahli
-          new Date().toLocaleString('ms-MY', { timeZone: 'Asia/Kuala_Lumpur' }), // B - Tarikh
-          nama || '',               // C - Nama
-          ic || '',                 // D - IC
-          alamat || '',             // E - Alamat
-          noTel || '',              // F - No Tel
-          dun || '',                // G - DUN
-          cawangan || '',           // H - Cawangan
-          jawatan || ''             // I - Jawatan
+          nextNum,
+          new Date().toLocaleString('ms-MY', { timeZone: 'Asia/Kuala_Lumpur' }),
+          nama || '',
+          ic || '',
+          alamat || '',
+          noTel || '',
+          dun || '',
+          cawangan || '',
+          jawatan || ''
         ]],
       },
     });
@@ -209,7 +203,7 @@ app.get('/api/stats', checkPassword, async (req, res) => {
       range: 'Sheet1!A:I',
     });
     const rows = response.data.values || [];
-    const dataRows = rows.slice(1); // skip header
+    const dataRows = rows.slice(1);
 
     const stats = {
       total: dataRows.length,
@@ -239,4 +233,5 @@ app.listen(PORT, () => {
   console.log(`✅ PGRS Keningau server running on port ${PORT}`);
   console.log(`🔐 Password: ${APP_PASSWORD}`);
   console.log(`🤖 AI Model: gemini-2.5-flash`);
+  console.log(`📁 Google Auth: Secret File (/etc/secrets/google-key.json)`);
 });
