@@ -1,200 +1,254 @@
 const express = require('express');
-const cors = require('cors');
-const axios = require('axios');
-const { GoogleGenAI } = require('@google/genai');
-const { google } = require('googleapis');
-require('dotenv').config();
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { GoogleSpreadsheet } = require('google-spreadsheet');
+const { JWT } = require('google-auth-library');
+const path = require('path');
 
 const app = express();
-app.use(cors());
-app.use(express.json({ limit: '10mb' }));
+const PORT = process.env.PORT || 3000;
+
+// Middleware
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(express.static(__dirname));
 
-// ===== CONFIG =====
+// Environment Variables
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GOOGLE_SHEET_ID = process.env.GOOGLE_SHEET_ID;
+const GOOGLE_SERVICE_ACCOUNT_EMAIL = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+const GOOGLE_PRIVATE_KEY = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n');
 const APP_PASSWORD = process.env.APP_PASSWORD || 'pgrs-keningau';
-const GOOGLE_SHEET_ID = process.env.GOOGLE_SHEET_ID || '';
-const GOOGLE_SERVICE_EMAIL = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || '';
-const GOOGLE_PRIVATE_KEY = (process.env.GOOGLE_PRIVATE_KEY || '').replace(/\\n/g, '\n');
 
-// ===== AI =====
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || 'MISSING' });
-const AI_MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash'];
+// Initialize Gemini
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
-// ===== DUN DATABASE =====
-let KAMPUNG_DATABASE = {};
-
-const DUN_LIST = ['N39 TAMBUNAN', 'N40 BINGKOR', 'N41 LIAWAN'];
-
-// ===== PASSWORD MIDDLEWARE =====
+// ============================================================
+// PASSWORD MIDDLEWARE
+// ============================================================
 function checkPassword(req, res, next) {
-    const pass = req.query.pass || req.body.pass || req.headers['x-app-pass'];
-    if (pass !== APP_PASSWORD) {
-        if (req.path === '/' || req.path === '/register') {
-            return res.send(`<!DOCTYPE html><html><head><title>Login PGRS</title><meta name="viewport" content="width=device-width, initial-scale=1.0"><style>body{background:#050a15;color:white;font-family:Arial;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;padding:20px}.login-box{background:linear-gradient(135deg,#0d1526,#101c33);border:1px solid #38bdf8;border-radius:15px;padding:40px 30px;max-width:400px;width:100%;text-align:center;box-shadow:0 0 30px rgba(56,189,248,0.3)}h1{color:#fbbf24;margin-bottom:10px;font-size:22px;letter-spacing:2px}p{color:#94a3b8;margin-bottom:30px;font-size:12px}input{width:100%;padding:15px;font-size:16px;border-radius:10px;border:1px solid #38bdf8;background:rgba(5,10,21,0.8);color:white;box-sizing:border-box;margin-bottom:15px}button{width:100%;padding:15px;font-size:16px;background:linear-gradient(135deg,#38bdf8,#0284c7);color:white;border:none;border-radius:10px;cursor:pointer;font-weight:bold;letter-spacing:2px}</style></head><body><div class="login-box"><h1>🔒 PGRS KENINGAU</h1><p>REGISTER AHLI PARTI</p><form method="GET"><input type="password" name="pass" placeholder="Masukkan password" autofocus><button type="submit">MASUK</button></form></div></body></html>`);
-        }
-        return res.status(401).json({ status: 'error', message: 'Password salah' });
-    }
-    next();
+  const pass = req.query.pass || req.body.pass;
+  if (pass !== APP_PASSWORD) {
+    return res.status(401).send(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>PGRS Keningau - Login</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+          body { font-family: Arial; background: #0a1929; color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+          .box { background: #132f4c; padding: 40px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); text-align: center; width: 90%; max-width: 400px; }
+          h1 { color: #66b2ff; margin-bottom: 8px; }
+          p { color: #b0c4de; margin-bottom: 24px; }
+          input { width: 100%; padding: 12px; border: 2px solid #1e4976; border-radius: 8px; background: #0a1929; color: white; font-size: 16px; box-sizing: border-box; }
+          button { width: 100%; padding: 12px; margin-top: 16px; background: #1976d2; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
+          button:hover { background: #1565c0; }
+        </style>
+      </head>
+      <body>
+        <div class="box">
+          <h1>🔒 PGRS KENINGAU</h1>
+          <p>Register Ahli Parti</p>
+          <form method="GET">
+            <input type="password" name="pass" placeholder="Masukkan password" autofocus required>
+            <button type="submit">MASUK</button>
+          </form>
+        </div>
+      </body>
+      </html>
+    `);
+  }
+  next();
 }
 
-// ===== GOOGLE SHEETS CLIENT =====
-function getSheetsClient() {
-    const auth = new google.auth.GoogleAuth({
-        credentials: {
-            client_email: GOOGLE_SERVICE_EMAIL,
-            private_key: GOOGLE_PRIVATE_KEY
-        },
-        scopes: ['https://www.googleapis.com/auth/spreadsheets']
+// ============================================================
+// GOOGLE SHEETS HELPER
+// ============================================================
+async function getSheet() {
+  const serviceAccountAuth = new JWT({
+    email: GOOGLE_SERVICE_ACCOUNT_EMAIL,
+    key: GOOGLE_PRIVATE_KEY,
+    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+  });
+
+  const doc = new GoogleSpreadsheet(GOOGLE_SHEET_ID, serviceAccountAuth);
+  await doc.loadInfo();
+  return doc;
+}
+
+// ============================================================
+// ROUTES
+// ============================================================
+
+// Home page
+app.get('/', checkPassword, (req, res) => {
+  res.sendFile(path.join(__dirname, 'register.html'));
+});
+
+// Get next number
+app.get('/api/next-number', checkPassword, async (req, res) => {
+  try {
+    const doc = await getSheet();
+    const sheet = doc.sheetsByIndex[0];
+    const rows = await sheet.getRows();
+    const nextNum = 355001 + rows.length;
+    res.json({ next: nextNum, total: rows.length });
+  } catch (err) {
+    console.error('Error next-number:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Scan borang (Gemini AI)
+app.post('/api/scan', checkPassword, async (req, res) => {
+  try {
+    const { image } = req.body;
+    if (!image) {
+      return res.status(400).json({ error: 'Tiada gambar' });
+    }
+
+    // ⭐ MODEL TERKINI — Gemini 2.5 Flash
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+
+    const prompt = `Anda adalah pembantu untuk membaca borang pendaftaran ahli parti PGRS Keningau.
+Baca maklumat dari gambar borang ini dan kembalikan dalam format JSON SAHAJA (tanpa markdown, tanpa penjelasan):
+
+{
+  "nama": "nama penuh",
+  "ic": "nombor IC tanpa dash",
+  "alamat": "alamat penuh",
+  "telefon": "nombor telefon",
+  "dun": "N39 atau N40 atau N41",
+  "cawangan": "nama cawangan",
+  "tarikh": "YYYY-MM-DD"
+}
+
+Jika ada maklumat yang tidak jelas atau tidak ada, letakkan string kosong "".
+Pastikan output adalah JSON SAHAJA.`;
+
+    const result = await model.generateContent([
+      prompt,
+      {
+        inlineData: {
+          mimeType: 'image/jpeg',
+          data: image.replace(/^data:image\/\w+;base64,/, '')
+        }
+      }
+    ]);
+
+    const response = await result.response;
+    let text = response.text().trim();
+
+    // Clean up possible markdown
+    text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      return res.status(500).json({ error: 'Format JSON tak sah: ' + text });
+    }
+
+    res.json(data);
+  } catch (err) {
+    console.error('Error scan:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Save to Google Sheet
+app.post('/api/save', checkPassword, async (req, res) => {
+  try {
+    const { nama, ic, alamat, telefon, dun, cawangan, tarikh } = req.body;
+
+    if (!nama || !ic) {
+      return res.status(400).json({ error: 'Nama dan IC wajib' });
+    }
+
+    const doc = await getSheet();
+    const sheet = doc.sheetsByIndex[0];
+    const rows = await sheet.getRows();
+    const nextNum = 355001 + rows.length;
+
+    await sheet.addRow({
+      'NO': nextNum,
+      'NAMA': nama,
+      'IC': ic,
+      'ALAMAT': alamat,
+      'TELEFON': telefon,
+      'DUN': dun,
+      'CAWANGAN': cawangan,
+      'TARIKH': tarikh || new Date().toISOString().split('T')[0],
+      'MASA': new Date().toLocaleString('ms-MY', { timeZone: 'Asia/Kuala_Lumpur' })
     });
-    return google.sheets({ version: 'v4', auth });
-}
 
-// ===== AI CALL =====
-async function callAI(prompt, imageBase64 = null) {
-    const contents = [];
-    if (imageBase64) {
-        contents.push({ inlineData: { mimeType: 'image/jpeg', data: imageBase64 } });
-    }
-    contents.push({ text: prompt });
-    
-    let lastErr = null;
-    for (const model of AI_MODELS) {
-        try {
-            const result = await ai.models.generateContent({ model: model, contents: contents });
-            console.log(`✅ AI guna model: ${model}`);
-            return result.text;
-        } catch (e) {
-            console.log(`❌ ${model} gagal: ${e.message}`);
-            lastErr = e;
-        }
-    }
-    throw lastErr;
-}
-
-// ===== CLEAN JSON =====
-function cleanJSON(text) {
-    let clean = text.trim();
-    clean = clean.replace(/```json/gi, '').replace(/```/g, '').trim();
-    const start = clean.indexOf('{');
-    const end = clean.lastIndexOf('}');
-    if (start !== -1 && end !== -1) clean = clean.substring(start, end + 1);
-    return clean;
-}
-
-// ===== AUTO-DETECT DUN =====
-function detectDUN(alamat) {
-    if (!alamat) return { dun: null, confidence: 'none', keyword: null };
-    const alamatLower = alamat.toLowerCase();
-    for (const [keyword, dun] of Object.entries(KAMPUNG_DATABASE)) {
-        if (alamatLower.includes(keyword.toLowerCase())) {
-            return { dun: dun, confidence: 'auto', keyword: keyword };
-        }
-    }
-    if (alamatLower.includes('liawan') || alamatLower.includes('agudon')) return { dun: 'N41 LIAWAN', confidence: 'guess', keyword: 'agudon' };
-    if (alamatLower.includes('bingkor') || alamatLower.includes('bunsit')) return { dun: 'N40 BINGKOR', confidence: 'guess', keyword: 'bingkor' };
-    if (alamatLower.includes('tambunan') || alamatLower.includes('keranaan')) return { dun: 'N39 TAMBUNAN', confidence: 'guess', keyword: 'tambunan' };
-    return { dun: null, confidence: 'none', keyword: null };
-}
-
-// ===== ROUTES =====
-app.get('/', checkPassword, (req, res) => res.sendFile(__dirname + '/register.html'));
-app.get('/register', checkPassword, (req, res) => res.sendFile(__dirname + '/register.html'));
-app.get('/health', (req, res) => res.json({ status: 'OK', timestamp: new Date().toISOString() }));
-
-// ===== SCAN BORANG =====
-app.post('/api/scan-borang', checkPassword, async (req, res) => {
-    const { imageBase64 } = req.body;
-    if (!imageBase64) return res.status(400).json({ status: 'error', message: 'No image' });
-    try {
-        const prompt = `Baca borang keahlian PARTI GAGASAN RAKYAT SABAH (PGRS) ini. Extract SEMUA data dan return JSON ONLY: {"no_borang":"355001","bahagian":"N41 LIAWAN","cawangan":"K4 AGUDON","nama":"NAMA","ic_no":"XXXXXX-XX-XXXX","tarikh_lahir":"DD/MM/YYYY","jantina":"LELAKI/PEREMPUAN","alamat":"ALAMAT","phone":"0123456789","jenis_keahlian":"BIASA"}`;
-        const result = await callAI(prompt, imageBase64);
-        const data = JSON.parse(cleanJSON(result));
-        const detection = detectDUN(data.alamat);
-        data.dun_detected = detection.dun;
-        data.detection_confidence = detection.confidence;
-        data.learn_keyword = detection.keyword;
-        data.no_ahli = data.no_borang;
-        data.tarikh_scan = new Date().toISOString();
-        res.json({ status: 'success', data: data, auto_detected: detection.confidence === 'auto' });
-    } catch (e) { res.status(500).json({ status: 'error', message: e.message }); }
+    res.json({ success: true, no: nextNum });
+  } catch (err) {
+    console.error('Error save:', err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// ===== SCAN IC =====
-app.post('/api/scan-ic', checkPassword, async (req, res) => {
-    const { imageBase64 } = req.body;
-    if (!imageBase64) return res.status(400).json({ status: 'error', message: 'No image' });
-    try {
-        const prompt = `Baca IC Malaysia ini. Return JSON ONLY: {"nama":"NAMA","ic_no":"XXXXXX-XX-XXXX","alamat":"ALAMAT"}`;
-        const result = await callAI(prompt, imageBase64);
-        const data = JSON.parse(cleanJSON(result));
-        res.json({ status: 'success', data: data });
-    } catch (e) { res.status(500).json({ status: 'error', message: e.message }); }
+// Get all data
+app.get('/api/all', checkPassword, async (req, res) => {
+  try {
+    const doc = await getSheet();
+    const sheet = doc.sheetsByIndex[0];
+    const rows = await sheet.getRows();
+    const data = rows.map(r => ({
+      no: r.get('NO'),
+      nama: r.get('NAMA'),
+      ic: r.get('IC'),
+      alamat: r.get('ALAMAT'),
+      telefon: r.get('TELEFON'),
+      dun: r.get('DUN'),
+      cawangan: r.get('CAWANGAN'),
+      tarikh: r.get('TARIKH'),
+      masa: r.get('MASA')
+    }));
+    res.json(data);
+  } catch (err) {
+    console.error('Error all:', err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// ===== SAVE AHLI =====
-app.post('/api/save-ahli', checkPassword, async (req, res) => {
-    const { data, selected_dun, learn_keyword } = req.body;
-    if (!data) return res.status(400).json({ status: 'error', message: 'No data' });
-    try {
-        if (selected_dun && learn_keyword) {
-            KAMPUNG_DATABASE[learn_keyword.toLowerCase()] = selected_dun;
-        }
-        const dunFinal = selected_dun || data.dun_detected || data.bahagian;
-        data.dun = dunFinal;
-        if (GOOGLE_SHEET_ID && GOOGLE_SERVICE_EMAIL) {
-            const sheets = getSheetsClient();
-            const existing = await sheets.spreadsheets.values.get({ spreadsheetId: GOOGLE_SHEET_ID, range: 'Sheet1!A:A' });
-            const noBorangList = (existing.data.values || []).map(r => r[0]);
-            const rowIndex = noBorangList.indexOf(data.no_borang);
-            const rowData = [[data.no_borang||'', data.no_ahli||'', data.dun||'', data.cawangan||'', data.nama||'', data.ic_no||'', data.tarikh_lahir||'', data.tempat_lahir||'', data.jantina||'', data.agama||'', data.bangsa||'', data.suku||'', data.alamat||'', data.poskod||'', data.daerah||'', data.negeri||'', data.phone||'', data.email||'', data.jenis_keahlian||'', data.tarikh_permohonan||'', data.tarikh_scan||new Date().toISOString()]];
-            if (rowIndex > 0) {
-                await sheets.spreadsheets.values.update({ spreadsheetId: GOOGLE_SHEET_ID, range: `Sheet1!A${rowIndex+1}:U${rowIndex+1}`, valueInputOption: 'USER_ENTERED', requestBody: { values: rowData } });
-            } else {
-                await sheets.spreadsheets.values.append({ spreadsheetId: GOOGLE_SHEET_ID, range: 'Sheet1!A:U', valueInputOption: 'USER_ENTERED', requestBody: { values: rowData } });
-            }
-        }
-        res.json({ status: 'success', message: 'Saved', data: data });
-    } catch (e) { res.status(500).json({ status: 'error', message: e.message }); }
+// Statistik
+app.get('/api/stats', checkPassword, async (req, res) => {
+  try {
+    const doc = await getSheet();
+    const sheet = doc.sheetsByIndex[0];
+    const rows = await sheet.getRows();
+
+    const stats = {
+      total: rows.length,
+      n39: rows.filter(r => r.get('DUN') === 'N39').length,
+      n40: rows.filter(r => r.get('DUN') === 'N40').length,
+      n41: rows.filter(r => r.get('DUN') === 'N41').length,
+    };
+
+    res.json(stats);
+  } catch (err) {
+    console.error('Error stats:', err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// ===== AHLI LIST =====
-app.get('/api/ahli-list', checkPassword, async (req, res) => {
-    try {
-        if (!GOOGLE_SHEET_ID) return res.json({ status: 'success', ahli: [], total: 0 });
-        const sheets = getSheetsClient();
-        const result = await sheets.spreadsheets.values.get({ spreadsheetId: GOOGLE_SHEET_ID, range: 'Sheet1!A2:U' });
-        const rows = result.data.values || [];
-        const ahli = rows.map(row => ({ no_borang: row[0]||'', no_ahli: row[1]||'', dun: row[2]||'', cawangan: row[3]||'', nama: row[4]||'', ic_no: row[5]||'', jantina: row[8]||'', phone: row[16]||'', jenis_keahlian: row[18]||'' }));
-        res.json({ status: 'success', ahli: ahli, total: ahli.length });
-    } catch (e) { res.status(500).json({ status: 'error', message: e.message }); }
+// Test AI
+app.get('/api/test-ai', checkPassword, async (req, res) => {
+  try {
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const result = await model.generateContent('Balas dengan: OK');
+    res.json({ success: true, reply: result.response.text() });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// ===== DOWNLOAD EXCEL =====
-app.get('/api/download-excel', checkPassword, (req, res) => {
-    if (!GOOGLE_SHEET_ID) return res.status(500).send('Sheet ID tak set');
-    res.redirect(`https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/export?format=xlsx`);
-});
-
-// ===== PRINT VIEW =====
-app.get('/api/print-view', checkPassword, (req, res) => {
-    if (!GOOGLE_SHEET_ID) return res.status(500).send('Sheet ID tak set');
-    res.redirect(`https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/print`);
-});
-
-// ===== KAMPUNG DB =====
-app.get('/api/kampung-db', checkPassword, (req, res) => {
-    res.json({ status: 'success', database: KAMPUNG_DATABASE, total: Object.keys(KAMPUNG_DATABASE).length });
-});
-
-// ===== DUN LIST =====
-app.get('/api/dun-list', checkPassword, (req, res) => {
-    res.json({ status: 'success', dun: DUN_LIST });
-});
-
-// ===== START =====
-const PORT = process.env.PORT || 3000;
+// ============================================================
+// START SERVER
+// ============================================================
 app.listen(PORT, () => {
-    console.log(`🚀 PGRS KENINGAU berjalan di port ${PORT}`);
-    console.log(`🔐 Password: ${APP_PASSWORD}`);
-    console.log(`📊 Google Sheet: ${GOOGLE_SHEET_ID ? 'Set ✅' : 'Belum set ❌'}`);
+  console.log(`✅ PGRS Keningau server running on port ${PORT}`);
+  console.log(`🔒 Password: ${APP_PASSWORD}`);
+  console.log(`🤖 AI Model: gemini-2.5-flash`);
 });
