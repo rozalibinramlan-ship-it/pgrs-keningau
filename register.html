@@ -4,155 +4,370 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PGRS Keningau — Member Registration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #ffffff; color: #212121; min-height: 100vh; padding: 16px; padding-bottom: 80px; }
+
+  body {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #ffffff;
+    color: #212121;
+    min-height: 100vh;
+    padding: 16px;
+    padding-bottom: 80px;
+  }
+
+  /* ===================== LOGIN PAGE ===================== */
+  .login-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 92vh;
+    text-align: center;
+    padding: 20px;
+  }
+  .login-logo { max-width: 130px; margin-bottom: 24px; }
+  .login-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    color: #C62828;
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+  }
+  .login-subtitle {
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    color: #666;
+    letter-spacing: 5px;
+    font-weight: 300;
+    margin-bottom: 36px;
+  }
+  .login-divider {
+    width: 80px;
+    height: 3px;
+    background: #C62828;
+    margin: 0 auto 32px;
+    border-radius: 2px;
+  }
+  .login-form { width: 100%; max-width: 340px; }
+  .login-label {
+    font-family: 'Poppins', sans-serif;
+    display: block;
+    font-size: 11px;
+    color: #C62828;
+    letter-spacing: 2px;
+    font-weight: 600;
+    text-align: left;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .login-input {
+    font-family: 'Arial', sans-serif;
+    width: 100%;
+    padding: 18px;
+    font-size: 22px;
+    text-align: center;
+    letter-spacing: 8px;
+    background: #FAFAFA;
+    border: 2px solid #E0E0E0;
+    border-radius: 12px;
+    color: #212121;
+    outline: none;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+  .login-input:focus { border-color: #C62828; background: white; }
+
+  .remember-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+    gap: 10px;
+    cursor: pointer;
+  }
+  .remember-wrap input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #C62828;
+    cursor: pointer;
+  }
+  .remember-wrap label {
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    color: #555;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .login-btn {
+    font-family: 'Poppins', sans-serif;
+    width: 100%;
+    padding: 20px;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    background: linear-gradient(135deg, #C62828, #E53935);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(198,40,40,0.3);
+    transition: transform 0.1s;
+  }
+  .login-btn:active { transform: scale(0.98); }
+  .login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .login-error {
+    color: #C62828;
+    font-size: 13px;
+    margin-top: 14px;
+    min-height: 20px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+  }
+  .login-footer {
+    margin-top: 40px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 11px;
+    color: #999;
+    letter-spacing: 1.5px;
+    line-height: 1.8;
+    text-align: center;
+  }
+  .login-footer .brand { color: #C62828; font-weight: 600; }
+  .login-footer .credit { font-size: 10px; color: #999; margin-top: 4px; font-weight: 300; }
+
+  /* ===================== APP HEADER ===================== */
   .header { text-align: center; padding: 20px 0 16px; border-bottom: 3px solid #C62828; margin-bottom: 20px; }
   .logo-wrap { display: flex; justify-content: center; align-items: center; margin-bottom: 12px; }
   .logo-wrap img { max-width: 110px; max-height: 110px; object-fit: contain; }
-  .logo-placeholder { width: 90px; height: 90px; background: #C62828; color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; margin: 0 auto 12px; }
-  .header h1 { font-size: 24px; color: #C62828; letter-spacing: 2px; margin-bottom: 4px; font-weight: 800; }
-  .header p { font-size: 12px; color: #666; letter-spacing: 3px; }
+  .logo-placeholder {
+    width: 90px; height: 90px; background: #C62828; color: white; border-radius: 50%;
+    display: none; align-items: center; justify-content: center;
+    font-family: 'Poppins', sans-serif; font-size: 28px; font-weight: 800;
+  }
+  .header h1 { font-family: 'Poppins', sans-serif; font-size: 26px; color: #C62828; letter-spacing: 3px; margin-bottom: 6px; font-weight: 800; }
+  .header p { font-family: 'Poppins', sans-serif; font-size: 12px; color: #666; letter-spacing: 5px; font-weight: 300; }
+
+  /* ===================== PROGRESS ===================== */
   .progress-box { background: #FFF5F5; border: 2px solid #FFCDD2; border-radius: 12px; padding: 16px; margin-bottom: 20px; position: relative; padding-bottom: 24px; }
-  .progress-box .label { font-size: 12px; color: #C62828; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-  .progress-box .value { font-size: 20px; font-weight: bold; color: #212121; }
+  .progress-box .label { font-family: 'Poppins', sans-serif; font-size: 11px; color: #C62828; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; }
+  .progress-box .value { font-family: 'Poppins', sans-serif; font-size: 20px; font-weight: 800; color: #212121; }
   .progress-bar { height: 6px; background: #FFEBEE; border-radius: 3px; margin-top: 8px; overflow: hidden; position: absolute; left: 16px; right: 16px; bottom: 8px; }
   .progress-bar-fill { height: 100%; background: linear-gradient(90deg, #C62828, #E53935); width: 0%; transition: width 0.5s; }
-  .btn-main { width: 100%; padding: 18px; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; letter-spacing: 1.5px; cursor: pointer; margin-bottom: 12px; transition: transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+
+  /* ===================== BUTANG ===================== */
+  .btn-main {
+    font-family: 'Poppins', sans-serif;
+    width: 100%; padding: 18px; border: none; border-radius: 12px;
+    font-size: 16px; font-weight: 600; letter-spacing: 1.5px;
+    cursor: pointer; margin-bottom: 12px; transition: transform 0.1s;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+  }
   .btn-main:active { transform: scale(0.98); }
   .btn-primary { background: linear-gradient(135deg, #C62828, #E53935); color: white; box-shadow: 0 4px 15px rgba(198,40,40,0.3); font-size: 18px; padding: 22px; }
   .btn-ai { background: white; color: #C62828; border: 2px solid #C62828; font-size: 15px; }
   .btn-secondary { background: #FFF5F5; color: #C62828; border: 1px solid #FFCDD2; font-size: 14px; padding: 14px; }
   .btn-save { background: linear-gradient(135deg, #2E7D32, #43A047); color: white; box-shadow: 0 4px 15px rgba(46,125,50,0.3); }
   .btn-cancel { background: #F5F5F5; color: #666; border: 1px solid #E0E0E0; }
+  .btn-logout { background: #F5F5F5; color: #C62828; border: 1px solid #FFCDD2; font-size: 14px; padding: 14px; margin-top: 20px; }
+
+  /* ===================== SECTION ===================== */
   .section { background: white; border: 2px solid #FFCDD2; border-radius: 12px; padding: 18px; margin-bottom: 16px; display: none; }
   .section.active { display: block; }
-  .section-title { font-size: 14px; color: #C62828; letter-spacing: 2px; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid #FFCDD2; font-weight: 700; text-transform: uppercase; }
+  .section-title {
+    font-family: 'Poppins', sans-serif; font-size: 14px; color: #C62828;
+    letter-spacing: 2px; margin-bottom: 14px; padding-bottom: 8px;
+    border-bottom: 2px solid #FFCDD2; font-weight: 700; text-transform: uppercase;
+  }
+
+  /* ===================== FORM ===================== */
   .form-group { margin-bottom: 14px; }
-  .form-group label { display: block; font-size: 12px; color: #C62828; margin-bottom: 6px; letter-spacing: 1px; font-weight: 600; text-transform: uppercase; }
-  .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px 14px; background: #FAFAFA; border: 2px solid #E0E0E0; border-radius: 8px; color: #212121; font-size: 15px; font-family: inherit; outline: none; }
-  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #C62828; background: white; }
+  .form-group label {
+    font-family: 'Poppins', sans-serif; display: block; font-size: 11px;
+    color: #C62828; margin-bottom: 6px; letter-spacing: 1.5px;
+    font-weight: 600; text-transform: uppercase;
+  }
+  .form-group input, .form-group select, .form-group textarea {
+    font-family: 'Arial', sans-serif; width: 100%; padding: 12px 14px;
+    background: #FAFAFA; border: 2px solid #E0E0E0; border-radius: 8px;
+    color: #212121; font-size: 15px; letter-spacing: 0.5px;
+    outline: none; text-transform: uppercase;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border-color: #C62828; background: white;
+  }
   .form-group textarea { resize: vertical; min-height: 60px; }
+  .form-group input#noTel, .form-group input#noAhli, .form-group input#noBorang { text-transform: none; }
   .form-group input.auto-filled, .form-group textarea.auto-filled { background: #FFF9C4; border-color: #FBC02D; transition: all 0.3s; }
-  .form-hint { font-size: 10px; color: #F57F17; margin-top: 4px; display: none; font-weight: 600; }
+  .form-hint { font-family: 'Poppins', sans-serif; font-size: 10px; color: #F57F17; margin-top: 4px; display: none; font-weight: 600; }
   .form-hint.show { display: block; }
+
+  /* ===================== FILE INPUT ===================== */
   .file-input-wrap { position: relative; overflow: hidden; display: inline-block; width: 100%; }
   .file-input-wrap input[type=file] { position: absolute; left: -9999px; }
-  .file-input-label { display: block; padding: 20px; background: #FAFAFA; border: 2px dashed #C62828; border-radius: 8px; text-align: center; cursor: pointer; color: #C62828; font-size: 14px; font-weight: 600; }
+  .file-input-label {
+    font-family: 'Poppins', sans-serif; display: block; padding: 20px;
+    background: #FAFAFA; border: 2px dashed #C62828; border-radius: 8px;
+    text-align: center; cursor: pointer; color: #C62828; font-size: 14px; font-weight: 600;
+  }
   .preview-img { max-width: 100%; border-radius: 8px; margin-top: 10px; display: none; border: 2px solid #FFCDD2; }
-  .loading { display: none; text-align: center; padding: 20px; color: #C62828; }
+
+  /* ===================== LOADING ===================== */
+  .loading { display: none; text-align: center; padding: 20px; color: #C62828; font-family: 'Poppins', sans-serif; }
   .spinner { display: inline-block; width: 30px; height: 30px; border: 3px solid #FFCDD2; border-top-color: #C62828; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 10px; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .footer { text-align: center; font-size: 11px; color: #999; letter-spacing: 1.5px; padding: 24px 0 12px; line-height: 1.8; }
+
+  /* ===================== FOOTER ===================== */
+  .footer {
+    font-family: 'Poppins', sans-serif; text-align: center; font-size: 11px;
+    color: #999; letter-spacing: 1.5px; padding: 24px 0 12px; line-height: 1.8;
+  }
   .footer .brand { color: #C62828; font-weight: 600; }
-  .footer .credit { font-size: 10px; color: #999; margin-top: 4px; }
-  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: #2E7D32; color: white; padding: 14px 24px; border-radius: 8px; font-size: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); transition: transform 0.3s; z-index: 1000; max-width: 90%; }
+  .footer .credit { font-size: 10px; color: #999; margin-top: 4px; font-weight: 300; }
+
+  /* ===================== TOAST ===================== */
+  .toast {
+    font-family: 'Poppins', sans-serif; position: fixed; bottom: 20px; left: 50%;
+    transform: translateX(-50%) translateY(100px); background: #2E7D32;
+    color: white; padding: 14px 24px; border-radius: 8px; font-size: 14px;
+    font-weight: 500; box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    transition: transform 0.3s; z-index: 1000; max-width: 90%;
+  }
   .toast.show { transform: translateX(-50%) translateY(0); }
   .toast.error { background: #C62828; }
+
+  .hidden { display: none !important; }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="logo-wrap">
-    <img src="logo-pgrs.png" alt="PGRS Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-    <div class="logo-placeholder">PGRS</div>
-  </div>
-  <h1>PGRS KENINGAU</h1>
-  <p>MEMBER REGISTRATION</p>
-</div>
+<!-- LOGIN PAGE -->
+<div class="login-page" id="loginPage">
+  <img src="logo-pgrs.png" alt="PGRS Logo" class="login-logo" onerror="this.style.display='none';">
+  <div class="login-title">PGRS KENINGAU</div>
+  <div class="login-subtitle">MEMBER REGISTRATION</div>
+  <div class="login-divider"></div>
 
-<div class="progress-box">
-  <div style="display:flex; justify-content:space-between;">
-    <div><div class="label">Progress</div><div class="value" id="progressText">0 / 400</div></div>
-    <div style="text-align:right;"><div class="label">Next No.</div><div class="value" id="nextNumber">-</div></div>
-  </div>
-  <div class="progress-bar"><div class="progress-bar-fill" id="progressFill"></div></div>
-</div>
+  <div class="login-form">
+    <label class="login-label">🔐 Enter Password</label>
+    <input type="password" id="passwordInput" class="login-input"
+           placeholder="••••••" autocomplete="off"
+           onkeypress="if(event.key==='Enter') doLogin()">
 
-<button class="btn-main btn-primary" onclick="showManualForm()">✍️ ENTER DATA MANUALLY</button>
-<button class="btn-main btn-ai" onclick="showScan()">📷 SCAN FORM (AI)</button>
-<button class="btn-main btn-secondary" onclick="downloadExcel()">📥 DOWNLOAD EXCEL</button>
-<button class="btn-main btn-secondary" onclick="printSenarai()">🖨️ PRINT LIST</button>
-<button class="btn-main btn-secondary" onclick="showStatistik()">📊 STATISTICS</button>
-
-<!-- SCAN SECTION -->
-<div class="section" id="sectionScan">
-  <div class="section-title">📷 Scan Form (AI)</div>
-  <div class="form-group">
-    <label>Form Image</label>
-    <div class="file-input-wrap">
-      <input type="file" id="gambarBorang" accept="image/*" capture="environment" onchange="previewImage(event)">
-      <label for="gambarBorang" class="file-input-label" id="fileLabel">📸 Tap to take photo</label>
+    <div class="remember-wrap" onclick="toggleRemember()">
+      <input type="checkbox" id="rememberCheck" onclick="event.stopPropagation();">
+      <label for="rememberCheck">Remember me (7 days)</label>
     </div>
-    <img id="previewImg" class="preview-img" alt="Preview">
+
+    <button class="login-btn" id="loginBtn" onclick="doLogin()">LOGIN</button>
+    <div class="login-error" id="loginError"></div>
   </div>
-  <div class="loading" id="loading"><div class="spinner"></div><div>Scanning form...</div></div>
-  <button class="btn-main btn-save" onclick="scanBorang()" id="btnScan">🔍 SCAN & AUTO-FILL</button>
-  <button class="btn-main btn-cancel" onclick="showManualForm()">✍️ Skip — Enter Manually</button>
+
+  <div class="login-footer">
+    <div class="brand">PGRS KENINGAU · N39 · N40 · N41</div>
+    <div class="credit">Created by Zalie</div>
+  </div>
 </div>
 
-<!-- FORM SECTION -->
-<div class="section" id="sectionForm">
-  <div class="section-title">📝 Member Information</div>
-  <div class="form-group"><label>Form No.</label><input type="text" id="noBorang" readonly></div>
-  <div class="form-group"><label>Member No.</label><input type="text" id="noAhli" placeholder="Auto or manual" autocomplete="off"></div>
-  <div class="form-group"><label>Full Name *</label><input type="text" id="nama" autocomplete="off"></div>
+<!-- APP PAGE -->
+<div id="appPage" class="hidden">
 
-  <!-- IC — Auto Tarikh Lahir -->
-  <div class="form-group">
-    <label>IC No. * (Auto-fills Date of Birth)</label>
-    <input type="text" id="ic" inputmode="numeric" placeholder="900101-12-3456" autocomplete="off" oninput="autoFillFromIC()">
-    <div class="form-hint" id="icHint">✅ Date of birth auto-filled from IC</div>
+  <div class="header">
+    <div class="logo-wrap">
+      <img src="logo-pgrs.png" alt="PGRS Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="logo-placeholder">PGRS</div>
+    </div>
+    <h1>PGRS KENINGAU</h1>
+    <p>MEMBER REGISTRATION</p>
   </div>
 
-  <div class="form-group"><label>DUN *</label>
-    <select id="dun">
-      <option value="">-- Select DUN --</option>
-      <option value="N39">N39 - TAMBUNAN</option>
-      <option value="N40">N40 - BINGKOR</option>
-      <option value="N41">N41 - LIAWAN</option>
-    </select>
-  </div>
-  <div class="form-group"><label>Branch / Cawangan</label><input type="text" id="cawangan" autocomplete="off"></div>
-
-  <!-- Tarikh Lahir — Auto dari IC -->
-  <div class="form-group">
-    <label>Date of Birth (auto from IC)</label>
-    <input type="text" id="tarikhLahir" placeholder="DD/MM/YYYY" autocomplete="off"
-           oninput="this.classList.remove('auto-filled')">
+  <div class="progress-box">
+    <div style="display:flex; justify-content:space-between;">
+      <div><div class="label">Progress</div><div class="value" id="progressText">0 / 400</div></div>
+      <div style="text-align:right;"><div class="label">Next No.</div><div class="value" id="nextNumber">-</div></div>
+    </div>
+    <div class="progress-bar"><div class="progress-bar-fill" id="progressFill"></div></div>
   </div>
 
-  <!-- Tempat Lahir — Auto dari Alamat -->
-  <div class="form-group">
-    <label>Place of Birth (auto from Address)</label>
-    <input type="text" id="tempatLahir" placeholder="Auto from address" autocomplete="off"
-           oninput="this.dataset.manualEdit='true'; this.classList.remove('auto-filled')">
-    <div class="form-hint" id="pobHint">✅ Auto-filled from address</div>
+  <button class="btn-main btn-primary" onclick="showManualForm()">✍️ ENTER DATA MANUALLY</button>
+  <button class="btn-main btn-ai" onclick="showScan()">📷 SCAN FORM (AI)</button>
+
+  <!-- ADMIN ONLY -->
+  <button class="btn-main btn-secondary admin-only hidden" onclick="downloadExcel()">📥 DOWNLOAD EXCEL</button>
+  <button class="btn-main btn-secondary admin-only hidden" onclick="printSenarai()">🖨️ PRINT LIST</button>
+  <button class="btn-main btn-secondary admin-only hidden" onclick="showStatistik()">📊 STATISTICS</button>
+
+  <button class="btn-main btn-logout" onclick="doLogout()">🚪 LOGOUT</button>
+
+  <!-- SCAN SECTION -->
+  <div class="section" id="sectionScan">
+    <div class="section-title">📷 Scan Form (AI)</div>
+    <div class="form-group">
+      <label>Form Image</label>
+      <div class="file-input-wrap">
+        <input type="file" id="gambarBorang" accept="image/*" capture="environment" onchange="previewImage(event)">
+        <label for="gambarBorang" class="file-input-label" id="fileLabel">📸 Tap to take photo</label>
+      </div>
+      <img id="previewImg" class="preview-img" alt="Preview">
+    </div>
+    <div class="loading" id="loading"><div class="spinner"></div><div>Scanning form...</div></div>
+    <button class="btn-main btn-save" onclick="scanBorang()" id="btnScan">🔍 SCAN & AUTO-FILL</button>
+    <button class="btn-main btn-cancel" onclick="showManualForm()">✍️ Skip — Enter Manually</button>
   </div>
 
-  <div class="form-group"><label>Phone No.</label><input type="text" id="noTel" inputmode="numeric" placeholder="0123456789" autocomplete="off"></div>
-  <div class="form-group"><label>Position / Jawatan</label><input type="text" id="jawatan" autocomplete="off"></div>
-
-  <!-- Alamat — Auto-fill Tempat Lahir -->
-  <div class="form-group">
-    <label>Address</label>
-    <textarea id="alamat" rows="2" oninput="autoFillBirthPlace()" placeholder="KG BINGKOR B, KENINGAU, SABAH"></textarea>
-    <div class="form-hint" id="alamatHint">ℹ️ Place of birth auto-fills from first part</div>
+  <!-- FORM SECTION -->
+  <div class="section" id="sectionForm">
+    <div class="section-title">📝 Member Information</div>
+    <div class="form-group"><label>Form No.</label><input type="text" id="noBorang" readonly></div>
+    <div class="form-group"><label>Member No.</label><input type="text" id="noAhli" placeholder="Auto or manual" autocomplete="off"></div>
+    <div class="form-group"><label>Full Name *</label><input type="text" id="nama" autocomplete="off"></div>
+    <div class="form-group">
+      <label>IC No. * (Auto-fills DOB)</label>
+      <input type="text" id="ic" inputmode="numeric" placeholder="900101-12-3456" autocomplete="off" oninput="autoFillFromIC()">
+      <div class="form-hint" id="icHint">✅ DOB auto-filled from IC</div>
+    </div>
+    <div class="form-group"><label>DUN *</label>
+      <select id="dun">
+        <option value="">-- SELECT DUN --</option>
+        <option value="N39">N39 - TAMBUNAN</option>
+        <option value="N40">N40 - BINGKOR</option>
+        <option value="N41">N41 - LIAWAN</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Branch / Cawangan</label><input type="text" id="cawangan" autocomplete="off"></div>
+    <div class="form-group">
+      <label>Date of Birth (auto from IC)</label>
+      <input type="text" id="tarikhLahir" placeholder="DD/MM/YYYY" autocomplete="off" oninput="this.classList.remove('auto-filled')">
+    </div>
+    <div class="form-group">
+      <label>Place of Birth (auto from Address)</label>
+      <input type="text" id="tempatLahir" placeholder="AUTO FROM ADDRESS" autocomplete="off" oninput="this.dataset.manualEdit='true'; this.classList.remove('auto-filled')">
+      <div class="form-hint" id="pobHint">✅ Auto-filled from address</div>
+    </div>
+    <div class="form-group"><label>Phone No.</label><input type="text" id="noTel" inputmode="numeric" placeholder="0123456789" autocomplete="off"></div>
+    <div class="form-group"><label>Position / Jawatan</label><input type="text" id="jawatan" autocomplete="off"></div>
+    <div class="form-group">
+      <label>Address</label>
+      <textarea id="alamat" rows="2" oninput="autoFillBirthPlace()" placeholder="KG BINGKOR B, KENINGAU, SABAH"></textarea>
+    </div>
+    <button class="btn-main btn-save" onclick="simpanAhli()" id="btnSave">💾 SAVE MEMBER</button>
+    <button class="btn-main btn-cancel" onclick="resetForm()">❌ CANCEL</button>
   </div>
 
-  <button class="btn-main btn-save" onclick="simpanAhli()" id="btnSave">💾 SAVE MEMBER</button>
-  <button class="btn-main btn-cancel" onclick="resetForm()">❌ CANCEL</button>
-</div>
+  <div class="section" id="sectionStat">
+    <div class="section-title">📊 Statistics</div>
+    <div id="statContent" style="padding:10px 0; line-height:2; font-family:'Arial',sans-serif;">Loading...</div>
+  </div>
 
-<div class="section" id="sectionStat">
-  <div class="section-title">📊 Statistics</div>
-  <div id="statContent" style="padding:10px 0; line-height:2;">Loading...</div>
-</div>
-
-<div class="footer">
-  <div class="brand">PGRS KENINGAU · N39 · N40 · N41</div>
-  <div class="credit">Created by Zalie</div>
+  <div class="footer">
+    <div class="brand">PGRS KENINGAU · N39 · N40 · N41</div>
+    <div class="credit">Created by Zalie</div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -161,23 +376,150 @@
 // ============================================================
 // GLOBAL
 // ============================================================
+let PASSWORD = '';
+let USER_ROLE = 'staff';
 const URL_PARAMS = new URLSearchParams(window.location.search);
-const PASSWORD = URL_PARAMS.get('pass') || '';
 
 // ============================================================
-// AUTO-FILL TARIKH LAHIR DARI IC
+// AUTO-LOGIN (kalau URL ada ?pass=)
+// ============================================================
+async function tryAutoLogin(pass) {
+  try {
+    const res = await fetch('/api/check-role?pass=' + encodeURIComponent(pass));
+    const data = await res.json();
+    if (data.success) {
+      PASSWORD = pass;
+      USER_ROLE = data.role;
+      openApp();
+      return true;
+    }
+  } catch (err) { console.error(err); }
+  return false;
+}
+
+// ============================================================
+// CHECK REMEMBER ME
+// ============================================================
+function checkRememberedLogin() {
+  const saved = localStorage.getItem('pgrs_pass');
+  const expiry = localStorage.getItem('pgrs_expiry');
+
+  if (saved && expiry && Date.now() < parseInt(expiry)) {
+    // Masih valid — auto-login
+    tryAutoLogin(saved);
+  }
+  // Kalau expired — buang
+  if (expiry && Date.now() >= parseInt(expiry)) {
+    localStorage.removeItem('pgrs_pass');
+    localStorage.removeItem('pgrs_expiry');
+  }
+}
+
+// ============================================================
+// LOGIN
+// ============================================================
+async function doLogin() {
+  const input = document.getElementById('passwordInput').value.trim();
+  const errorEl = document.getElementById('loginError');
+  const btn = document.getElementById('loginBtn');
+  const remember = document.getElementById('rememberCheck').checked;
+
+  if (!input) {
+    errorEl.textContent = 'Please enter password';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'CHECKING...';
+  errorEl.textContent = '';
+
+  try {
+    const res = await fetch('/api/check-role?pass=' + encodeURIComponent(input));
+    const data = await res.json();
+
+    if (data.success) {
+      PASSWORD = input;
+      USER_ROLE = data.role;
+
+      // Save kalau tick remember
+      if (remember) {
+        localStorage.setItem('pgrs_pass', input);
+        localStorage.setItem('pgrs_expiry', Date.now() + (7 * 24 * 60 * 60 * 1000));
+      } else {
+        localStorage.removeItem('pgrs_pass');
+        localStorage.removeItem('pgrs_expiry');
+      }
+
+      openApp();
+    } else {
+      errorEl.textContent = '❌ Wrong password';
+      document.getElementById('passwordInput').value = '';
+    }
+  } catch (err) {
+    errorEl.textContent = '❌ Error: ' + err.message;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'LOGIN';
+  }
+}
+
+function toggleRemember() {
+  const cb = document.getElementById('rememberCheck');
+  cb.checked = !cb.checked;
+}
+
+// ============================================================
+// LOGOUT
+// ============================================================
+function doLogout() {
+  if (!confirm('Logout dari app?')) return;
+
+  localStorage.removeItem('pgrs_pass');
+  localStorage.removeItem('pgrs_expiry');
+
+  PASSWORD = '';
+  USER_ROLE = 'staff';
+
+  // Reset UI
+  document.getElementById('appPage').classList.add('hidden');
+  document.getElementById('loginPage').classList.remove('hidden');
+  document.getElementById('passwordInput').value = '';
+  document.getElementById('rememberCheck').checked = false;
+  document.getElementById('loginError').textContent = '';
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ============================================================
+// OPEN APP
+// ============================================================
+function openApp() {
+  document.getElementById('loginPage').classList.add('hidden');
+  document.getElementById('appPage').classList.remove('hidden');
+
+  // Tunjuk/sorok admin menu
+  if (USER_ROLE === 'admin') {
+    document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
+  } else {
+    document.querySelectorAll('.admin-only').forEach(el => el.classList.add('hidden'));
+  }
+
+  loadNextNumber();
+  loadProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ============================================================
+// AUTO-FILL DOB FROM IC
 // ============================================================
 function detectDOBFromIC(ic) {
   let digits = (ic || '').toString().replace(/\D/g, '');
   if (digits.length < 6) return null;
-
   let yy = parseInt(digits.substring(0, 2), 10);
   let mm = parseInt(digits.substring(2, 4), 10);
   let dd = parseInt(digits.substring(4, 6), 10);
-
   if (mm < 1 || mm > 12) return null;
   if (dd < 1 || dd > 31) return null;
-
   let year = (yy <= 25) ? (2000 + yy) : (1900 + yy);
   let ddStr = String(dd).padStart(2, '0');
   let mmStr = String(mm).padStart(2, '0');
@@ -190,16 +532,13 @@ function autoFillFromIC() {
   const hint = document.getElementById('icHint');
   const ic = icInput.value;
 
-  // Auto-format IC: 580205125311 → 580205-12-5311
   let digits = ic.replace(/\D/g, '');
   if (digits.length === 12) {
     icInput.value = digits.replace(/(\d{6})(\d{2})(\d{4})/, '$1-$2-$3');
   }
 
-  // Auto-fill Tarikh Lahir
   const dob = detectDOBFromIC(icInput.value);
   if (dob) {
-    // Hanya auto-isi kalau field tak diedit manual
     if (!dobInput.dataset.manualEdit || dobInput.dataset.manualEdit !== 'true') {
       dobInput.value = dob;
       dobInput.classList.add('auto-filled');
@@ -215,12 +554,10 @@ function autoFillFromIC() {
 }
 
 // ============================================================
-// AUTO-FILL TEMPAT LAHIR DARI ALAMAT
-// Ambil bahagian pertama sahaja (sebelum koma)
+// AUTO-FILL POB FROM ADDRESS
 // ============================================================
 function detectBirthPlaceFromAddress(alamat) {
   if (!alamat) return '';
-  // Ambil bahagian sebelum koma pertama
   let firstPart = alamat.split(',')[0].trim();
   return firstPart ? firstPart.toUpperCase() : '';
 }
@@ -230,7 +567,6 @@ function autoFillBirthPlace() {
   const pobInput = document.getElementById('tempatLahir');
   const alamat = alamatInput.value;
 
-  // Kalau tempat lahir sudah diedit manual, jangan tulis
   if (pobInput.dataset.manualEdit === 'true') return;
 
   let place = detectBirthPlaceFromAddress(alamat);
@@ -238,11 +574,8 @@ function autoFillBirthPlace() {
     pobInput.value = place;
     pobInput.classList.add('auto-filled');
     pobInput.dataset.autoFilled = 'true';
-    setTimeout(() => {
-      pobInput.classList.remove('auto-filled');
-    }, 2500);
+    setTimeout(() => pobInput.classList.remove('auto-filled'), 2500);
   } else {
-    // Kalau alamat kosong, clear tempat lahir
     if (pobInput.dataset.autoFilled === 'true') {
       pobInput.value = '';
       pobInput.dataset.autoFilled = 'false';
@@ -277,12 +610,7 @@ function showManualForm() {
   hideAllSections();
   ['nama','ic','dun','cawangan','tarikhLahir','tempatLahir','noTel','jawatan','alamat'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) {
-      el.value = '';
-      el.classList.remove('auto-filled');
-      delete el.dataset.manualEdit;
-      delete el.dataset.autoFilled;
-    }
+    if (el) { el.value = ''; el.classList.remove('auto-filled'); delete el.dataset.manualEdit; delete el.dataset.autoFilled; }
   });
   document.getElementById('noAhli').value = '';
   document.getElementById('icHint').classList.remove('show');
@@ -307,12 +635,7 @@ function showStatistik() {
 function resetForm() {
   ['noBorang','noAhli','nama','ic','dun','cawangan','tarikhLahir','tempatLahir','noTel','jawatan','alamat'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) {
-      el.value = '';
-      el.classList.remove('auto-filled');
-      delete el.dataset.manualEdit;
-      delete el.dataset.autoFilled;
-    }
+    if (el) { el.value = ''; el.classList.remove('auto-filled'); delete el.dataset.manualEdit; delete el.dataset.autoFilled; }
   });
   document.getElementById('previewImg').style.display = 'none';
   document.getElementById('gambarBorang').value = '';
@@ -382,24 +705,19 @@ async function scanBorang() {
       catch (e) { showToast('AI format error', true); return; }
     }
 
-    let nama = (dataObj.nama || '').toString().trim();
+    let nama = (dataObj.nama || '').toString().toUpperCase().trim();
     let icDigits = (dataObj.ic || '').toString().replace(/\D/g, '');
     let ic = icDigits;
     if (icDigits.length === 12) ic = icDigits.replace(/(\d{6})(\d{2})(\d{4})/, '$1-$2-$3');
     let dunRaw = (dataObj.dun || '').toString().toUpperCase().trim();
-    let cawangan = (dataObj.cawangan || '').toString().trim();
-    let tempatLahir = (dataObj.tempatLahir || '').toString().trim();
+    let cawangan = (dataObj.cawangan || '').toString().toUpperCase().trim();
+    let tempatLahir = (dataObj.tempatLahir || '').toString().toUpperCase().trim();
     let noTel = (dataObj.noTel || '').toString().replace(/\D/g, '');
-    let jawatan = (dataObj.jawatan || '').toString().trim();
-    let alamat = (dataObj.alamat || '').toString().trim();
+    let jawatan = (dataObj.jawatan || '').toString().toUpperCase().trim();
+    let alamat = (dataObj.alamat || '').toString().toUpperCase().trim();
 
-    // Tarikh Lahir — auto dari IC
     let tarikhLahir = detectDOBFromIC(ic) || (dataObj.tarikhLahir || '').toString().trim();
-
-    // Tempat lahir — auto dari alamat kalau kosong
-    if (!tempatLahir && alamat) {
-      tempatLahir = detectBirthPlaceFromAddress(alamat);
-    }
+    if (!tempatLahir && alamat) tempatLahir = detectBirthPlaceFromAddress(alamat);
 
     let dun = '';
     if (/N\s*39|TAMBUNAN/i.test(dunRaw)) dun = 'N39';
@@ -421,9 +739,9 @@ async function scanBorang() {
     document.getElementById('alamat').value = alamat;
 
     showForm();
-    showToast('✅ Scan successful! Please verify.');
+    showToast('✅ Scan successful!');
   } catch (err) {
-    console.error('Scan error:', err);
+    console.error(err);
     showToast('Error: ' + err.message, true);
   } finally {
     btnScan.disabled = false;
@@ -435,8 +753,8 @@ async function scanBorang() {
 // SIMPAN AHLI
 // ============================================================
 async function simpanAhli() {
-  const nama = document.getElementById('nama').value.trim();
-  const ic = document.getElementById('ic').value.trim();
+  const nama = document.getElementById('nama').value.trim().toUpperCase();
+  const ic = document.getElementById('ic').value.trim().toUpperCase();
   const dun = document.getElementById('dun').value;
   const noAhliManual = document.getElementById('noAhli').value.trim();
 
@@ -455,12 +773,12 @@ async function simpanAhli() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         nama, ic, dun,
-        cawangan: document.getElementById('cawangan').value.trim(),
+        cawangan: document.getElementById('cawangan').value.trim().toUpperCase(),
         tarikhLahir: document.getElementById('tarikhLahir').value.trim(),
-        tempatLahir: document.getElementById('tempatLahir').value.trim(),
+        tempatLahir: document.getElementById('tempatLahir').value.trim().toUpperCase(),
         noTel: document.getElementById('noTel').value.trim(),
-        jawatan: document.getElementById('jawatan').value.trim(),
-        alamat: document.getElementById('alamat').value.trim(),
+        jawatan: document.getElementById('jawatan').value.trim().toUpperCase(),
+        alamat: document.getElementById('alamat').value.trim().toUpperCase(),
         noAhliManual: noAhliManual
       })
     });
@@ -554,9 +872,7 @@ async function downloadExcel() {
     a.click();
     URL.revokeObjectURL(url);
     showToast('✅ Download successful');
-  } catch (err) {
-    showToast('Error: ' + err.message, true);
-  }
+  } catch (err) { showToast('Error: ' + err.message, true); }
 }
 
 async function printSenarai() {
@@ -594,18 +910,24 @@ async function printSenarai() {
     `);
     w.document.close();
     setTimeout(() => w.print(), 500);
-  } catch (err) {
-    showToast('Error: ' + err.message, true);
-  }
+  } catch (err) { showToast('Error: ' + err.message, true); }
 }
 
 // ============================================================
 // INIT
 // ============================================================
-window.addEventListener('DOMContentLoaded', () => {
-  console.log('PGRS Keningau loaded.');
-  loadNextNumber();
-  loadProgress();
+window.addEventListener('DOMContentLoaded', async () => {
+  console.log('PGRS Keningau loaded');
+
+  // 1. Cuba auto-login dari URL (?pass=)
+  const urlPass = URL_PARAMS.get('pass');
+  if (urlPass) {
+    const ok = await tryAutoLogin(urlPass);
+    if (ok) return;
+  }
+
+  // 2. Cuba auto-login dari localStorage (Remember Me)
+  checkRememberedLogin();
 });
 </script>
 
