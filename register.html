@@ -6,300 +6,53 @@
 <title>PGRS Keningau — Member Registration</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #ffffff;
-    color: #212121;
-    min-height: 100vh;
-    padding: 16px;
-    padding-bottom: 80px;
-  }
-
-  /* ===================== HEADER ===================== */
-  .header {
-    text-align: center;
-    padding: 20px 0 16px;
-    border-bottom: 3px solid #C62828;
-    margin-bottom: 20px;
-  }
-  .logo-wrap {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 12px;
-  }
-  .logo-wrap img {
-    max-width: 110px;
-    max-height: 110px;
-    object-fit: contain;
-  }
-  .logo-placeholder {
-    width: 90px;
-    height: 90px;
-    background: #C62828;
-    color: white;
-    border-radius: 50%;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    font-size: 28px;
-    font-weight: bold;
-    margin: 0 auto 12px;
-  }
-  .header h1 {
-    font-size: 24px;
-    color: #C62828;
-    letter-spacing: 2px;
-    margin-bottom: 4px;
-    font-weight: 800;
-  }
-  .header p {
-    font-size: 12px;
-    color: #666;
-    letter-spacing: 3px;
-  }
-
-  /* ===================== PROGRESS ===================== */
-  .progress-box {
-    background: #FFF5F5;
-    border: 2px solid #FFCDD2;
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 20px;
-    position: relative;
-    padding-bottom: 24px;
-  }
-  .progress-box .label {
-    font-size: 12px;
-    color: #C62828;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-  .progress-box .value {
-    font-size: 20px;
-    font-weight: bold;
-    color: #212121;
-  }
-  .progress-bar {
-    height: 6px;
-    background: #FFEBEE;
-    border-radius: 3px;
-    margin-top: 8px;
-    overflow: hidden;
-    position: absolute;
-    left: 16px;
-    right: 16px;
-    bottom: 8px;
-  }
-  .progress-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #C62828, #E53935);
-    width: 0%;
-    transition: width 0.5s;
-  }
-
-  /* ===================== BUTANG ===================== */
-  .btn-main {
-    width: 100%;
-    padding: 18px;
-    border: none;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: bold;
-    letter-spacing: 1.5px;
-    cursor: pointer;
-    margin-bottom: 12px;
-    transition: transform 0.1s, box-shadow 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #ffffff; color: #212121; min-height: 100vh; padding: 16px; padding-bottom: 80px; }
+  .header { text-align: center; padding: 20px 0 16px; border-bottom: 3px solid #C62828; margin-bottom: 20px; }
+  .logo-wrap { display: flex; justify-content: center; align-items: center; margin-bottom: 12px; }
+  .logo-wrap img { max-width: 110px; max-height: 110px; object-fit: contain; }
+  .logo-placeholder { width: 90px; height: 90px; background: #C62828; color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; margin: 0 auto 12px; }
+  .header h1 { font-size: 24px; color: #C62828; letter-spacing: 2px; margin-bottom: 4px; font-weight: 800; }
+  .header p { font-size: 12px; color: #666; letter-spacing: 3px; }
+  .progress-box { background: #FFF5F5; border: 2px solid #FFCDD2; border-radius: 12px; padding: 16px; margin-bottom: 20px; position: relative; padding-bottom: 24px; }
+  .progress-box .label { font-size: 12px; color: #C62828; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+  .progress-box .value { font-size: 20px; font-weight: bold; color: #212121; }
+  .progress-bar { height: 6px; background: #FFEBEE; border-radius: 3px; margin-top: 8px; overflow: hidden; position: absolute; left: 16px; right: 16px; bottom: 8px; }
+  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, #C62828, #E53935); width: 0%; transition: width 0.5s; }
+  .btn-main { width: 100%; padding: 18px; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; letter-spacing: 1.5px; cursor: pointer; margin-bottom: 12px; transition: transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 10px; }
   .btn-main:active { transform: scale(0.98); }
-
-  .btn-primary {
-    background: linear-gradient(135deg, #C62828, #E53935);
-    color: white;
-    box-shadow: 0 4px 15px rgba(198, 40, 40, 0.3);
-    font-size: 18px;
-    padding: 22px;
-  }
-
-  .btn-ai {
-    background: white;
-    color: #C62828;
-    border: 2px solid #C62828;
-    font-size: 15px;
-  }
-
-  .btn-secondary {
-    background: #FFF5F5;
-    color: #C62828;
-    border: 1px solid #FFCDD2;
-    font-size: 14px;
-    padding: 14px;
-  }
-
-  .btn-save {
-    background: linear-gradient(135deg, #2E7D32, #43A047);
-    color: white;
-    box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
-  }
-
-  .btn-cancel {
-    background: #F5F5F5;
-    color: #666;
-    border: 1px solid #E0E0E0;
-  }
-
-  /* ===================== SECTION ===================== */
-  .section {
-    background: white;
-    border: 2px solid #FFCDD2;
-    border-radius: 12px;
-    padding: 18px;
-    margin-bottom: 16px;
-    display: none;
-  }
+  .btn-primary { background: linear-gradient(135deg, #C62828, #E53935); color: white; box-shadow: 0 4px 15px rgba(198,40,40,0.3); font-size: 18px; padding: 22px; }
+  .btn-ai { background: white; color: #C62828; border: 2px solid #C62828; font-size: 15px; }
+  .btn-secondary { background: #FFF5F5; color: #C62828; border: 1px solid #FFCDD2; font-size: 14px; padding: 14px; }
+  .btn-save { background: linear-gradient(135deg, #2E7D32, #43A047); color: white; box-shadow: 0 4px 15px rgba(46,125,50,0.3); }
+  .btn-cancel { background: #F5F5F5; color: #666; border: 1px solid #E0E0E0; }
+  .section { background: white; border: 2px solid #FFCDD2; border-radius: 12px; padding: 18px; margin-bottom: 16px; display: none; }
   .section.active { display: block; }
-
-  .section-title {
-    font-size: 14px;
-    color: #C62828;
-    letter-spacing: 2px;
-    margin-bottom: 14px;
-    padding-bottom: 8px;
-    border-bottom: 2px solid #FFCDD2;
-    font-weight: 700;
-    text-transform: uppercase;
-  }
-
-  /* ===================== FORM ===================== */
+  .section-title { font-size: 14px; color: #C62828; letter-spacing: 2px; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid #FFCDD2; font-weight: 700; text-transform: uppercase; }
   .form-group { margin-bottom: 14px; }
-  .form-group label {
-    display: block;
-    font-size: 12px;
-    color: #C62828;
-    margin-bottom: 6px;
-    letter-spacing: 1px;
-    font-weight: 600;
-    text-transform: uppercase;
-  }
-  .form-group input,
-  .form-group select,
-  .form-group textarea {
-    width: 100%;
-    padding: 12px 14px;
-    background: #FAFAFA;
-    border: 2px solid #E0E0E0;
-    border-radius: 8px;
-    color: #212121;
-    font-size: 15px;
-    font-family: inherit;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .form-group input:focus,
-  .form-group select:focus,
-  .form-group textarea:focus {
-    border-color: #C62828;
-    background: white;
-  }
+  .form-group label { display: block; font-size: 12px; color: #C62828; margin-bottom: 6px; letter-spacing: 1px; font-weight: 600; text-transform: uppercase; }
+  .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px 14px; background: #FAFAFA; border: 2px solid #E0E0E0; border-radius: 8px; color: #212121; font-size: 15px; font-family: inherit; outline: none; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #C62828; background: white; }
   .form-group textarea { resize: vertical; min-height: 60px; }
-
-  /* ===================== FILE INPUT ===================== */
-  .file-input-wrap {
-    position: relative;
-    overflow: hidden;
-    display: inline-block;
-    width: 100%;
-  }
-  .file-input-wrap input[type=file] {
-    position: absolute;
-    left: -9999px;
-  }
-  .file-input-label {
-    display: block;
-    padding: 20px;
-    background: #FAFAFA;
-    border: 2px dashed #C62828;
-    border-radius: 8px;
-    text-align: center;
-    cursor: pointer;
-    color: #C62828;
-    font-size: 14px;
-    font-weight: 600;
-  }
-  .preview-img {
-    max-width: 100%;
-    border-radius: 8px;
-    margin-top: 10px;
-    display: none;
-    border: 2px solid #FFCDD2;
-  }
-
-  /* ===================== LOADING ===================== */
-  .loading {
-    display: none;
-    text-align: center;
-    padding: 20px;
-    color: #C62828;
-  }
-  .spinner {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    border: 3px solid #FFCDD2;
-    border-top-color: #C62828;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-bottom: 10px;
-  }
+  .form-group input.auto-filled, .form-group textarea.auto-filled { background: #FFF9C4; border-color: #FBC02D; transition: all 0.3s; }
+  .form-hint { font-size: 10px; color: #F57F17; margin-top: 4px; display: none; font-weight: 600; }
+  .form-hint.show { display: block; }
+  .file-input-wrap { position: relative; overflow: hidden; display: inline-block; width: 100%; }
+  .file-input-wrap input[type=file] { position: absolute; left: -9999px; }
+  .file-input-label { display: block; padding: 20px; background: #FAFAFA; border: 2px dashed #C62828; border-radius: 8px; text-align: center; cursor: pointer; color: #C62828; font-size: 14px; font-weight: 600; }
+  .preview-img { max-width: 100%; border-radius: 8px; margin-top: 10px; display: none; border: 2px solid #FFCDD2; }
+  .loading { display: none; text-align: center; padding: 20px; color: #C62828; }
+  .spinner { display: inline-block; width: 30px; height: 30px; border: 3px solid #FFCDD2; border-top-color: #C62828; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 10px; }
   @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* ===================== FOOTER ===================== */
-  .footer {
-    text-align: center;
-    font-size: 11px;
-    color: #999;
-    letter-spacing: 1.5px;
-    padding: 24px 0 12px;
-    line-height: 1.8;
-  }
-  .footer .brand {
-    color: #C62828;
-    font-weight: 600;
-  }
-  .footer .credit {
-    font-size: 10px;
-    color: #999;
-    margin-top: 4px;
-  }
-
-  /* ===================== TOAST ===================== */
-  .toast {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: #2E7D32;
-    color: white;
-    padding: 14px 24px;
-    border-radius: 8px;
-    font-size: 14px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    transition: transform 0.3s;
-    z-index: 1000;
-    max-width: 90%;
-  }
+  .footer { text-align: center; font-size: 11px; color: #999; letter-spacing: 1.5px; padding: 24px 0 12px; line-height: 1.8; }
+  .footer .brand { color: #C62828; font-weight: 600; }
+  .footer .credit { font-size: 10px; color: #999; margin-top: 4px; }
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: #2E7D32; color: white; padding: 14px 24px; border-radius: 8px; font-size: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); transition: transform 0.3s; z-index: 1000; max-width: 90%; }
   .toast.show { transform: translateX(-50%) translateY(0); }
   .toast.error { background: #C62828; }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <div class="header">
   <div class="logo-wrap">
     <img src="logo-pgrs.png" alt="PGRS Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -309,7 +62,6 @@
   <p>MEMBER REGISTRATION</p>
 </div>
 
-<!-- PROGRESS -->
 <div class="progress-box">
   <div style="display:flex; justify-content:space-between;">
     <div><div class="label">Progress</div><div class="value" id="progressText">0 / 400</div></div>
@@ -318,20 +70,13 @@
   <div class="progress-bar"><div class="progress-bar-fill" id="progressFill"></div></div>
 </div>
 
-<!-- BUTANG UTAMA -->
-<button class="btn-main btn-primary" onclick="showManualForm()">
-  ✍️ ENTER DATA MANUALLY
-</button>
-
-<button class="btn-main btn-ai" onclick="showScan()">
-  📷 SCAN FORM (AI)
-</button>
-
+<button class="btn-main btn-primary" onclick="showManualForm()">✍️ ENTER DATA MANUALLY</button>
+<button class="btn-main btn-ai" onclick="showScan()">📷 SCAN FORM (AI)</button>
 <button class="btn-main btn-secondary" onclick="downloadExcel()">📥 DOWNLOAD EXCEL</button>
 <button class="btn-main btn-secondary" onclick="printSenarai()">🖨️ PRINT LIST</button>
 <button class="btn-main btn-secondary" onclick="showStatistik()">📊 STATISTICS</button>
 
-<!-- SECTION: SCAN (AI) -->
+<!-- SCAN SECTION -->
 <div class="section" id="sectionScan">
   <div class="section-title">📷 Scan Form (AI)</div>
   <div class="form-group">
@@ -347,13 +92,20 @@
   <button class="btn-main btn-cancel" onclick="showManualForm()">✍️ Skip — Enter Manually</button>
 </div>
 
-<!-- SECTION: FORM (MANUAL / HASIL SCAN) -->
+<!-- FORM SECTION -->
 <div class="section" id="sectionForm">
   <div class="section-title">📝 Member Information</div>
   <div class="form-group"><label>Form No.</label><input type="text" id="noBorang" readonly></div>
   <div class="form-group"><label>Member No.</label><input type="text" id="noAhli" placeholder="Auto or manual" autocomplete="off"></div>
   <div class="form-group"><label>Full Name *</label><input type="text" id="nama" autocomplete="off"></div>
-  <div class="form-group"><label>IC No. *</label><input type="text" id="ic" inputmode="numeric" placeholder="900101-12-3456" autocomplete="off"></div>
+
+  <!-- IC — Auto Tarikh Lahir -->
+  <div class="form-group">
+    <label>IC No. * (Auto-fills Date of Birth)</label>
+    <input type="text" id="ic" inputmode="numeric" placeholder="900101-12-3456" autocomplete="off" oninput="autoFillFromIC()">
+    <div class="form-hint" id="icHint">✅ Date of birth auto-filled from IC</div>
+  </div>
+
   <div class="form-group"><label>DUN *</label>
     <select id="dun">
       <option value="">-- Select DUN --</option>
@@ -363,22 +115,41 @@
     </select>
   </div>
   <div class="form-group"><label>Branch / Cawangan</label><input type="text" id="cawangan" autocomplete="off"></div>
-  <div class="form-group"><label>Date of Birth</label><input type="text" id="tarikhLahir" placeholder="DD/MM/YYYY" autocomplete="off"></div>
-  <div class="form-group"><label>Place of Birth</label><input type="text" id="tempatLahir" autocomplete="off"></div>
+
+  <!-- Tarikh Lahir — Auto dari IC -->
+  <div class="form-group">
+    <label>Date of Birth (auto from IC)</label>
+    <input type="text" id="tarikhLahir" placeholder="DD/MM/YYYY" autocomplete="off"
+           oninput="this.classList.remove('auto-filled')">
+  </div>
+
+  <!-- Tempat Lahir — Auto dari Alamat -->
+  <div class="form-group">
+    <label>Place of Birth (auto from Address)</label>
+    <input type="text" id="tempatLahir" placeholder="Auto from address" autocomplete="off"
+           oninput="this.dataset.manualEdit='true'; this.classList.remove('auto-filled')">
+    <div class="form-hint" id="pobHint">✅ Auto-filled from address</div>
+  </div>
+
   <div class="form-group"><label>Phone No.</label><input type="text" id="noTel" inputmode="numeric" placeholder="0123456789" autocomplete="off"></div>
   <div class="form-group"><label>Position / Jawatan</label><input type="text" id="jawatan" autocomplete="off"></div>
-  <div class="form-group"><label>Address</label><textarea id="alamat" rows="2"></textarea></div>
+
+  <!-- Alamat — Auto-fill Tempat Lahir -->
+  <div class="form-group">
+    <label>Address</label>
+    <textarea id="alamat" rows="2" oninput="autoFillBirthPlace()" placeholder="KG BINGKOR B, KENINGAU, SABAH"></textarea>
+    <div class="form-hint" id="alamatHint">ℹ️ Place of birth auto-fills from first part</div>
+  </div>
+
   <button class="btn-main btn-save" onclick="simpanAhli()" id="btnSave">💾 SAVE MEMBER</button>
   <button class="btn-main btn-cancel" onclick="resetForm()">❌ CANCEL</button>
 </div>
 
-<!-- SECTION: STATISTIK -->
 <div class="section" id="sectionStat">
   <div class="section-title">📊 Statistics</div>
   <div id="statContent" style="padding:10px 0; line-height:2;">Loading...</div>
 </div>
 
-<!-- FOOTER -->
 <div class="footer">
   <div class="brand">PGRS KENINGAU · N39 · N40 · N41</div>
   <div class="credit">Created by Zalie</div>
@@ -392,6 +163,92 @@
 // ============================================================
 const URL_PARAMS = new URLSearchParams(window.location.search);
 const PASSWORD = URL_PARAMS.get('pass') || '';
+
+// ============================================================
+// AUTO-FILL TARIKH LAHIR DARI IC
+// ============================================================
+function detectDOBFromIC(ic) {
+  let digits = (ic || '').toString().replace(/\D/g, '');
+  if (digits.length < 6) return null;
+
+  let yy = parseInt(digits.substring(0, 2), 10);
+  let mm = parseInt(digits.substring(2, 4), 10);
+  let dd = parseInt(digits.substring(4, 6), 10);
+
+  if (mm < 1 || mm > 12) return null;
+  if (dd < 1 || dd > 31) return null;
+
+  let year = (yy <= 25) ? (2000 + yy) : (1900 + yy);
+  let ddStr = String(dd).padStart(2, '0');
+  let mmStr = String(mm).padStart(2, '0');
+  return `${ddStr}/${mmStr}/${year}`;
+}
+
+function autoFillFromIC() {
+  const icInput = document.getElementById('ic');
+  const dobInput = document.getElementById('tarikhLahir');
+  const hint = document.getElementById('icHint');
+  const ic = icInput.value;
+
+  // Auto-format IC: 580205125311 → 580205-12-5311
+  let digits = ic.replace(/\D/g, '');
+  if (digits.length === 12) {
+    icInput.value = digits.replace(/(\d{6})(\d{2})(\d{4})/, '$1-$2-$3');
+  }
+
+  // Auto-fill Tarikh Lahir
+  const dob = detectDOBFromIC(icInput.value);
+  if (dob) {
+    // Hanya auto-isi kalau field tak diedit manual
+    if (!dobInput.dataset.manualEdit || dobInput.dataset.manualEdit !== 'true') {
+      dobInput.value = dob;
+      dobInput.classList.add('auto-filled');
+      hint.classList.add('show');
+      setTimeout(() => {
+        dobInput.classList.remove('auto-filled');
+        hint.classList.remove('show');
+      }, 2500);
+    }
+  } else {
+    hint.classList.remove('show');
+  }
+}
+
+// ============================================================
+// AUTO-FILL TEMPAT LAHIR DARI ALAMAT
+// Ambil bahagian pertama sahaja (sebelum koma)
+// ============================================================
+function detectBirthPlaceFromAddress(alamat) {
+  if (!alamat) return '';
+  // Ambil bahagian sebelum koma pertama
+  let firstPart = alamat.split(',')[0].trim();
+  return firstPart ? firstPart.toUpperCase() : '';
+}
+
+function autoFillBirthPlace() {
+  const alamatInput = document.getElementById('alamat');
+  const pobInput = document.getElementById('tempatLahir');
+  const alamat = alamatInput.value;
+
+  // Kalau tempat lahir sudah diedit manual, jangan tulis
+  if (pobInput.dataset.manualEdit === 'true') return;
+
+  let place = detectBirthPlaceFromAddress(alamat);
+  if (place) {
+    pobInput.value = place;
+    pobInput.classList.add('auto-filled');
+    pobInput.dataset.autoFilled = 'true';
+    setTimeout(() => {
+      pobInput.classList.remove('auto-filled');
+    }, 2500);
+  } else {
+    // Kalau alamat kosong, clear tempat lahir
+    if (pobInput.dataset.autoFilled === 'true') {
+      pobInput.value = '';
+      pobInput.dataset.autoFilled = 'false';
+    }
+  }
+}
 
 // ============================================================
 // TOAST
@@ -420,9 +277,15 @@ function showManualForm() {
   hideAllSections();
   ['nama','ic','dun','cawangan','tarikhLahir','tempatLahir','noTel','jawatan','alamat'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.value = '';
+    if (el) {
+      el.value = '';
+      el.classList.remove('auto-filled');
+      delete el.dataset.manualEdit;
+      delete el.dataset.autoFilled;
+    }
   });
   document.getElementById('noAhli').value = '';
+  document.getElementById('icHint').classList.remove('show');
   loadNextNumber().then(num => {
     document.getElementById('noBorang').value = num || '-';
   });
@@ -444,11 +307,18 @@ function showStatistik() {
 function resetForm() {
   ['noBorang','noAhli','nama','ic','dun','cawangan','tarikhLahir','tempatLahir','noTel','jawatan','alamat'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.value = '';
+    if (el) {
+      el.value = '';
+      el.classList.remove('auto-filled');
+      delete el.dataset.manualEdit;
+      delete el.dataset.autoFilled;
+    }
   });
   document.getElementById('previewImg').style.display = 'none';
   document.getElementById('gambarBorang').value = '';
   document.getElementById('fileLabel').textContent = '📸 Tap to take photo';
+  document.getElementById('icHint').classList.remove('show');
+  document.getElementById('pobHint').classList.remove('show');
   hideAllSections();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -470,7 +340,7 @@ function previewImage(event) {
 }
 
 // ============================================================
-// SCAN BORANG (AI - Optional)
+// SCAN BORANG
 // ============================================================
 async function scanBorang() {
   const fileInput = document.getElementById('gambarBorang');
@@ -497,8 +367,6 @@ async function scanBorang() {
     });
 
     const result = await res.json();
-    console.log('Server response:', result);
-
     if (!result.success) {
       showToast('Error: ' + (result.error || 'Scan failed'), true);
       return;
@@ -520,11 +388,18 @@ async function scanBorang() {
     if (icDigits.length === 12) ic = icDigits.replace(/(\d{6})(\d{2})(\d{4})/, '$1-$2-$3');
     let dunRaw = (dataObj.dun || '').toString().toUpperCase().trim();
     let cawangan = (dataObj.cawangan || '').toString().trim();
-    let tarikhLahir = (dataObj.tarikhLahir || '').toString().trim();
     let tempatLahir = (dataObj.tempatLahir || '').toString().trim();
     let noTel = (dataObj.noTel || '').toString().replace(/\D/g, '');
     let jawatan = (dataObj.jawatan || '').toString().trim();
     let alamat = (dataObj.alamat || '').toString().trim();
+
+    // Tarikh Lahir — auto dari IC
+    let tarikhLahir = detectDOBFromIC(ic) || (dataObj.tarikhLahir || '').toString().trim();
+
+    // Tempat lahir — auto dari alamat kalau kosong
+    if (!tempatLahir && alamat) {
+      tempatLahir = detectBirthPlaceFromAddress(alamat);
+    }
 
     let dun = '';
     if (/N\s*39|TAMBUNAN/i.test(dunRaw)) dun = 'N39';
@@ -579,9 +454,7 @@ async function simpanAhli() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        nama: nama,
-        ic: ic,
-        dun: dun,
+        nama, ic, dun,
         cawangan: document.getElementById('cawangan').value.trim(),
         tarikhLahir: document.getElementById('tarikhLahir').value.trim(),
         tempatLahir: document.getElementById('tempatLahir').value.trim(),
@@ -612,7 +485,7 @@ async function simpanAhli() {
 }
 
 // ============================================================
-// LOAD NEXT NUMBER
+// LOAD NEXT NUMBER / PROGRESS / STATS
 // ============================================================
 async function loadNextNumber() {
   try {
@@ -622,13 +495,10 @@ async function loadNextNumber() {
       document.getElementById('nextNumber').textContent = data.nextNumber;
       return data.nextNumber;
     }
-  } catch (err) { console.error('Load next number error:', err); }
+  } catch (err) { console.error(err); }
   return null;
 }
 
-// ============================================================
-// LOAD PROGRESS
-// ============================================================
 async function loadProgress() {
   try {
     const res = await fetch('/api/stats?pass=' + encodeURIComponent(PASSWORD));
@@ -640,12 +510,9 @@ async function loadProgress() {
       const percent = Math.min(100, (total / target) * 100);
       document.getElementById('progressFill').style.width = percent + '%';
     }
-  } catch (err) { console.error('Load progress error:', err); }
+  } catch (err) { console.error(err); }
 }
 
-// ============================================================
-// LOAD STATISTIK
-// ============================================================
 async function loadStatistik() {
   const content = document.getElementById('statContent');
   content.innerHTML = 'Loading...';
@@ -661,16 +528,13 @@ async function loadStatistik() {
         <div style="padding:8px 0;">📍 N41 Liawan: <strong>${s.n41}</strong></div>
       `;
     } else {
-      content.innerHTML = '❌ Failed to load stats';
+      content.innerHTML = '❌ Failed';
     }
   } catch (err) {
     content.innerHTML = '❌ Error: ' + err.message;
   }
 }
 
-// ============================================================
-// DOWNLOAD EXCEL (CSV)
-// ============================================================
 async function downloadExcel() {
   try {
     const res = await fetch('/api/list?pass=' + encodeURIComponent(PASSWORD));
@@ -695,9 +559,6 @@ async function downloadExcel() {
   }
 }
 
-// ============================================================
-// PRINT LIST
-// ============================================================
 async function printSenarai() {
   try {
     const res = await fetch('/api/list?pass=' + encodeURIComponent(PASSWORD));
@@ -707,8 +568,8 @@ async function printSenarai() {
       return;
     }
     const rows = data.data;
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(`
+    const w = window.open('', '_blank');
+    w.document.write(`
       <html><head><title>PGRS Keningau — Member List</title>
       <style>
         body { font-family: Arial, sans-serif; padding: 20px; }
@@ -726,15 +587,13 @@ async function printSenarai() {
             <th>DUN</th><th>Branch</th><th>DOB</th><th>POB</th>
             <th>Phone</th><th>Position</th><th>Address</th><th>Reg. Date</th>
           </tr></thead>
-          <tbody>
-            ${rows.slice(1).map(r => '<tr>' + r.map(c => `<td>${c || ''}</td>`).join('') + '</tr>').join('')}
-          </tbody>
+          <tbody>${rows.slice(1).map(r => '<tr>' + r.map(c => `<td>${c || ''}</td>`).join('') + '</tr>').join('')}</tbody>
         </table>
         <p style="text-align:center; color:#999; font-size:10px; margin-top:20px;">Created by Zalie</p>
       </body></html>
     `);
-    printWindow.document.close();
-    setTimeout(() => printWindow.print(), 500);
+    w.document.close();
+    setTimeout(() => w.print(), 500);
   } catch (err) {
     showToast('Error: ' + err.message, true);
   }
@@ -744,7 +603,7 @@ async function printSenarai() {
 // INIT
 // ============================================================
 window.addEventListener('DOMContentLoaded', () => {
-  console.log('PGRS Keningau loaded. Password:', PASSWORD ? '✅' : '❌');
+  console.log('PGRS Keningau loaded.');
   loadNextNumber();
   loadProgress();
 });
