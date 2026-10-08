@@ -3,21 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PGRS Keningau — Member Registration</title>
+<title>PGRS Keningau — Registration</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-  body {
-    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #ffffff;
-    color: #212121;
-    min-height: 100vh;
-    padding: 16px;
-    padding-bottom: 80px;
-  }
+  body { font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #ffffff; color: #212121; min-height: 100vh; padding: 16px; padding-bottom: 80px; }
 
   /* ===================== LOGIN PAGE ===================== */
   .login-page {
@@ -25,70 +17,137 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 92vh;
+    min-height: 100vh;
     text-align: center;
     padding: 20px;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #F5F5F5;
+    background-image: url('logo-pgrs.png');
+    background-size: 55%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    overflow-y: auto;
+    z-index: 100;
   }
-  .login-logo { max-width: 130px; margin-bottom: 24px; }
+  .login-page::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(245, 245, 245, 0.92);
+    z-index: 1;
+    pointer-events: none;
+  }
+  .login-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 380px;
+    padding: 20px 0;
+  }
+  .login-logo {
+    max-width: 110px;
+    margin-bottom: 18px;
+    filter: drop-shadow(0 4px 12px rgba(198,40,40,0.2));
+  }
   .login-title {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Orbitron', sans-serif;
     font-size: 32px;
     font-weight: 800;
     color: #C62828;
-    letter-spacing: 3px;
+    letter-spacing: 4px;
     margin-bottom: 8px;
+    text-shadow: 0 2px 4px rgba(198,40,40,0.15);
+    line-height: 1.1;
   }
   .login-subtitle {
-    font-family: 'Poppins', sans-serif;
-    font-size: 12px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
     color: #666;
     letter-spacing: 5px;
-    font-weight: 300;
-    margin-bottom: 36px;
+    font-weight: 500;
+    margin-bottom: 26px;
   }
   .login-divider {
-    width: 80px;
+    width: 100px;
     height: 3px;
-    background: #C62828;
-    margin: 0 auto 32px;
+    background: linear-gradient(90deg, transparent, #C62828, transparent);
+    margin: 0 auto 26px;
     border-radius: 2px;
   }
-  .login-form { width: 100%; max-width: 340px; }
+  .login-card {
+    background: white;
+    border-radius: 20px;
+    padding: 28px 24px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
+    width: 100%;
+    border: 1px solid rgba(198,40,40,0.08);
+  }
+  .login-form { width: 100%; }
   .login-label {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Orbitron', sans-serif;
     display: block;
-    font-size: 11px;
+    font-size: 10px;
     color: #C62828;
     letter-spacing: 2px;
-    font-weight: 600;
+    font-weight: 700;
     text-align: left;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     text-transform: uppercase;
+  }
+  .password-wrap {
+    position: relative;
+    width: 100%;
+    margin-bottom: 16px;
   }
   .login-input {
     font-family: 'Arial', sans-serif;
     width: 100%;
-    padding: 18px;
-    font-size: 22px;
+    padding: 16px 50px 16px 16px;
+    font-size: 20px;
     text-align: center;
-    letter-spacing: 8px;
+    letter-spacing: 6px;
     background: #FAFAFA;
     border: 2px solid #E0E0E0;
     border-radius: 12px;
     color: #212121;
     outline: none;
-    margin-bottom: 16px;
-    transition: border-color 0.2s;
+    transition: all 0.2s;
   }
-  .login-input:focus { border-color: #C62828; background: white; }
-
+  .login-input:focus {
+    border-color: #C62828;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(198,40,40,0.08);
+  }
+  .toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #C62828;
+    padding: 6px;
+    line-height: 1;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+  .toggle-password:hover { opacity: 1; }
   .remember-wrap {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    margin-bottom: 20px;
+    margin-bottom: 22px;
     gap: 10px;
     cursor: pointer;
+    padding: 4px 0;
   }
   .remember-wrap input[type="checkbox"] {
     width: 20px;
@@ -97,60 +156,69 @@
     cursor: pointer;
   }
   .remember-wrap label {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Arial', sans-serif;
     font-size: 13px;
     color: #555;
     cursor: pointer;
     user-select: none;
   }
-
   .login-btn {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Orbitron', sans-serif;
     width: 100%;
-    padding: 20px;
-    font-size: 17px;
+    padding: 18px;
+    font-size: 14px;
     font-weight: 700;
-    letter-spacing: 3px;
+    letter-spacing: 4px;
     background: linear-gradient(135deg, #C62828, #E53935);
     color: white;
     border: none;
     border-radius: 12px;
     cursor: pointer;
     box-shadow: 0 4px 15px rgba(198,40,40,0.3);
-    transition: transform 0.1s;
+    transition: all 0.2s;
   }
+  .login-btn:hover { box-shadow: 0 6px 20px rgba(198,40,40,0.4); }
   .login-btn:active { transform: scale(0.98); }
   .login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
   .login-error {
     color: #C62828;
+    font-family: 'Arial', sans-serif;
     font-size: 13px;
     margin-top: 14px;
     min-height: 20px;
     font-weight: 600;
-    font-family: 'Poppins', sans-serif;
   }
   .login-footer {
-    margin-top: 40px;
+    position: relative;
+    z-index: 2;
+    margin-top: 26px;
     font-family: 'Poppins', sans-serif;
-    font-size: 11px;
+    font-size: 10px;
     color: #999;
-    letter-spacing: 1.5px;
+    letter-spacing: 2px;
     line-height: 1.8;
     text-align: center;
   }
-  .login-footer .brand { color: #C62828; font-weight: 600; }
-  .login-footer .credit { font-size: 10px; color: #999; margin-top: 4px; font-weight: 300; }
+  .login-footer .brand {
+    color: #C62828;
+    font-weight: 700;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 9px;
+    letter-spacing: 3px;
+  }
+  .login-footer .credit {
+    font-size: 10px;
+    color: #999;
+    margin-top: 6px;
+    font-weight: 300;
+  }
 
   /* ===================== APP HEADER ===================== */
   .header { text-align: center; padding: 20px 0 16px; border-bottom: 3px solid #C62828; margin-bottom: 20px; }
   .logo-wrap { display: flex; justify-content: center; align-items: center; margin-bottom: 12px; }
   .logo-wrap img { max-width: 110px; max-height: 110px; object-fit: contain; }
-  .logo-placeholder {
-    width: 90px; height: 90px; background: #C62828; color: white; border-radius: 50%;
-    display: none; align-items: center; justify-content: center;
-    font-family: 'Poppins', sans-serif; font-size: 28px; font-weight: 800;
-  }
-  .header h1 { font-family: 'Poppins', sans-serif; font-size: 26px; color: #C62828; letter-spacing: 3px; margin-bottom: 6px; font-weight: 800; }
+  .logo-placeholder { width: 90px; height: 90px; background: #C62828; color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-family: 'Poppins', sans-serif; font-size: 28px; font-weight: 800; }
+  .header h1 { font-family: 'Orbitron', sans-serif; font-size: 24px; color: #C62828; letter-spacing: 3px; margin-bottom: 6px; font-weight: 800; }
   .header p { font-family: 'Poppins', sans-serif; font-size: 12px; color: #666; letter-spacing: 5px; font-weight: 300; }
 
   /* ===================== PROGRESS ===================== */
@@ -161,13 +229,7 @@
   .progress-bar-fill { height: 100%; background: linear-gradient(90deg, #C62828, #E53935); width: 0%; transition: width 0.5s; }
 
   /* ===================== BUTANG ===================== */
-  .btn-main {
-    font-family: 'Poppins', sans-serif;
-    width: 100%; padding: 18px; border: none; border-radius: 12px;
-    font-size: 16px; font-weight: 600; letter-spacing: 1.5px;
-    cursor: pointer; margin-bottom: 12px; transition: transform 0.1s;
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-  }
+  .btn-main { font-family: 'Poppins', sans-serif; width: 100%; padding: 18px; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; letter-spacing: 1.5px; cursor: pointer; margin-bottom: 12px; transition: transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 10px; }
   .btn-main:active { transform: scale(0.98); }
   .btn-primary { background: linear-gradient(135deg, #C62828, #E53935); color: white; box-shadow: 0 4px 15px rgba(198,40,40,0.3); font-size: 18px; padding: 22px; }
   .btn-ai { background: white; color: #C62828; border: 2px solid #C62828; font-size: 15px; }
@@ -179,28 +241,13 @@
   /* ===================== SECTION ===================== */
   .section { background: white; border: 2px solid #FFCDD2; border-radius: 12px; padding: 18px; margin-bottom: 16px; display: none; }
   .section.active { display: block; }
-  .section-title {
-    font-family: 'Poppins', sans-serif; font-size: 14px; color: #C62828;
-    letter-spacing: 2px; margin-bottom: 14px; padding-bottom: 8px;
-    border-bottom: 2px solid #FFCDD2; font-weight: 700; text-transform: uppercase;
-  }
+  .section-title { font-family: 'Poppins', sans-serif; font-size: 14px; color: #C62828; letter-spacing: 2px; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid #FFCDD2; font-weight: 700; text-transform: uppercase; }
 
   /* ===================== FORM ===================== */
   .form-group { margin-bottom: 14px; }
-  .form-group label {
-    font-family: 'Poppins', sans-serif; display: block; font-size: 11px;
-    color: #C62828; margin-bottom: 6px; letter-spacing: 1.5px;
-    font-weight: 600; text-transform: uppercase;
-  }
-  .form-group input, .form-group select, .form-group textarea {
-    font-family: 'Arial', sans-serif; width: 100%; padding: 12px 14px;
-    background: #FAFAFA; border: 2px solid #E0E0E0; border-radius: 8px;
-    color: #212121; font-size: 15px; letter-spacing: 0.5px;
-    outline: none; text-transform: uppercase;
-  }
-  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-    border-color: #C62828; background: white;
-  }
+  .form-group label { font-family: 'Poppins', sans-serif; display: block; font-size: 11px; color: #C62828; margin-bottom: 6px; letter-spacing: 1.5px; font-weight: 600; text-transform: uppercase; }
+  .form-group input, .form-group select, .form-group textarea { font-family: 'Arial', sans-serif; width: 100%; padding: 12px 14px; background: #FAFAFA; border: 2px solid #E0E0E0; border-radius: 8px; color: #212121; font-size: 15px; letter-spacing: 0.5px; outline: none; text-transform: uppercase; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #C62828; background: white; }
   .form-group textarea { resize: vertical; min-height: 60px; }
   .form-group input#noTel, .form-group input#noAhli, .form-group input#noBorang { text-transform: none; }
   .form-group input.auto-filled, .form-group textarea.auto-filled { background: #FFF9C4; border-color: #FBC02D; transition: all 0.3s; }
@@ -210,11 +257,7 @@
   /* ===================== FILE INPUT ===================== */
   .file-input-wrap { position: relative; overflow: hidden; display: inline-block; width: 100%; }
   .file-input-wrap input[type=file] { position: absolute; left: -9999px; }
-  .file-input-label {
-    font-family: 'Poppins', sans-serif; display: block; padding: 20px;
-    background: #FAFAFA; border: 2px dashed #C62828; border-radius: 8px;
-    text-align: center; cursor: pointer; color: #C62828; font-size: 14px; font-weight: 600;
-  }
+  .file-input-label { font-family: 'Poppins', sans-serif; display: block; padding: 20px; background: #FAFAFA; border: 2px dashed #C62828; border-radius: 8px; text-align: center; cursor: pointer; color: #C62828; font-size: 14px; font-weight: 600; }
   .preview-img { max-width: 100%; border-radius: 8px; margin-top: 10px; display: none; border: 2px solid #FFCDD2; }
 
   /* ===================== LOADING ===================== */
@@ -223,21 +266,12 @@
   @keyframes spin { to { transform: rotate(360deg); } }
 
   /* ===================== FOOTER ===================== */
-  .footer {
-    font-family: 'Poppins', sans-serif; text-align: center; font-size: 11px;
-    color: #999; letter-spacing: 1.5px; padding: 24px 0 12px; line-height: 1.8;
-  }
+  .footer { font-family: 'Poppins', sans-serif; text-align: center; font-size: 11px; color: #999; letter-spacing: 1.5px; padding: 24px 0 12px; line-height: 1.8; }
   .footer .brand { color: #C62828; font-weight: 600; }
   .footer .credit { font-size: 10px; color: #999; margin-top: 4px; font-weight: 300; }
 
   /* ===================== TOAST ===================== */
-  .toast {
-    font-family: 'Poppins', sans-serif; position: fixed; bottom: 20px; left: 50%;
-    transform: translateX(-50%) translateY(100px); background: #2E7D32;
-    color: white; padding: 14px 24px; border-radius: 8px; font-size: 14px;
-    font-weight: 500; box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    transition: transform 0.3s; z-index: 1000; max-width: 90%;
-  }
+  .toast { font-family: 'Poppins', sans-serif; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: #2E7D32; color: white; padding: 14px 24px; border-radius: 8px; font-size: 14px; font-weight: 500; box-shadow: 0 4px 20px rgba(0,0,0,0.2); transition: transform 0.3s; z-index: 1000; max-width: 90%; }
   .toast.show { transform: translateX(-50%) translateY(0); }
   .toast.error { background: #C62828; }
 
@@ -246,35 +280,38 @@
 </head>
 <body>
 
-<!-- LOGIN PAGE -->
+<!-- ===================== LOGIN PAGE ===================== -->
 <div class="login-page" id="loginPage">
-  <img src="logo-pgrs.png" alt="PGRS Logo" class="login-logo" onerror="this.style.display='none';">
-  <div class="login-title">PGRS KENINGAU</div>
-  <div class="login-subtitle">MEMBER REGISTRATION</div>
-  <div class="login-divider"></div>
+  <div class="login-content">
+    <img src="logo-pgrs.png" alt="PGRS Logo" class="login-logo" onerror="this.style.display='none';">
+    <div class="login-title">PGRS KENINGAU</div>
+    <div class="login-subtitle">MEMBER REGISTRATION</div>
+    <div class="login-divider"></div>
 
-  <div class="login-form">
-    <label class="login-label">🔐 Enter Password</label>
-    <input type="password" id="passwordInput" class="login-input"
-           placeholder="••••••" autocomplete="off"
-           onkeypress="if(event.key==='Enter') doLogin()">
-
-    <div class="remember-wrap" onclick="toggleRemember()">
-      <input type="checkbox" id="rememberCheck" onclick="event.stopPropagation();">
-      <label for="rememberCheck">Remember me (7 days)</label>
+    <div class="login-card">
+      <div class="login-form">
+        <label class="login-label">🔐 Enter Password</label>
+        <div class="password-wrap">
+          <input type="password" id="passwordInput" class="login-input" placeholder="••••••" autocomplete="off" onkeypress="if(event.key==='Enter') doLogin()">
+          <button type="button" class="toggle-password" onclick="togglePassword()" id="togglePw">👁️</button>
+        </div>
+        <div class="remember-wrap" onclick="toggleRemember()">
+          <input type="checkbox" id="rememberCheck" onclick="event.stopPropagation();">
+          <label for="rememberCheck">Remember me (7 days)</label>
+        </div>
+        <button class="login-btn" id="loginBtn" onclick="doLogin()">LOGIN</button>
+        <div class="login-error" id="loginError"></div>
+      </div>
     </div>
 
-    <button class="login-btn" id="loginBtn" onclick="doLogin()">LOGIN</button>
-    <div class="login-error" id="loginError"></div>
-  </div>
-
-  <div class="login-footer">
-    <div class="brand">PGRS KENINGAU · N39 · N40 · N41</div>
-    <div class="credit">Created by Zalie</div>
+    <div class="login-footer">
+      <div class="brand">PGRS KENINGAU · N39 · N40 · N41</div>
+      <div class="credit">Created by Zalie</div>
+    </div>
   </div>
 </div>
 
-<!-- APP PAGE -->
+<!-- ===================== APP PAGE ===================== -->
 <div id="appPage" class="hidden">
 
   <div class="header">
@@ -286,7 +323,8 @@
     <p>MEMBER REGISTRATION</p>
   </div>
 
-  <div class="progress-box">
+  <!-- PROGRESS BOX (admin only) -->
+  <div class="progress-box admin-only hidden">
     <div style="display:flex; justify-content:space-between;">
       <div><div class="label">Progress</div><div class="value" id="progressText">0 / 400</div></div>
       <div style="text-align:right;"><div class="label">Next No.</div><div class="value" id="nextNumber">-</div></div>
@@ -294,18 +332,21 @@
     <div class="progress-bar"><div class="progress-bar-fill" id="progressFill"></div></div>
   </div>
 
-  <button class="btn-main btn-primary" onclick="showManualForm()">✍️ ENTER DATA MANUALLY</button>
-  <button class="btn-main btn-ai" onclick="showScan()">📷 SCAN FORM (AI)</button>
+  <!-- ADMIN ONLY: SCAN -->
+  <button class="btn-main btn-ai admin-only hidden" onclick="showScan()">📷 SCAN FORM (AI)</button>
 
-  <!-- ADMIN ONLY -->
+  <!-- ALL: REGISTRATION -->
+  <button class="btn-main btn-primary" onclick="showManualForm()">✍️ REGISTRATION</button>
+
+  <!-- ADMIN ONLY: EXTRAS -->
   <button class="btn-main btn-secondary admin-only hidden" onclick="downloadExcel()">📥 DOWNLOAD EXCEL</button>
   <button class="btn-main btn-secondary admin-only hidden" onclick="printSenarai()">🖨️ PRINT LIST</button>
   <button class="btn-main btn-secondary admin-only hidden" onclick="showStatistik()">📊 STATISTICS</button>
 
   <button class="btn-main btn-logout" onclick="doLogout()">🚪 LOGOUT</button>
 
-  <!-- SCAN SECTION -->
-  <div class="section" id="sectionScan">
+  <!-- SCAN SECTION (admin only) -->
+  <div class="section admin-only hidden" id="sectionScan">
     <div class="section-title">📷 Scan Form (AI)</div>
     <div class="form-group">
       <label>Form Image</label>
@@ -359,7 +400,7 @@
     <button class="btn-main btn-cancel" onclick="resetForm()">❌ CANCEL</button>
   </div>
 
-  <div class="section" id="sectionStat">
+  <div class="section admin-only hidden" id="sectionStat">
     <div class="section-title">📊 Statistics</div>
     <div id="statContent" style="padding:10px 0; line-height:2; font-family:'Arial',sans-serif;">Loading...</div>
   </div>
@@ -381,7 +422,17 @@ let USER_ROLE = 'staff';
 const URL_PARAMS = new URLSearchParams(window.location.search);
 
 // ============================================================
-// AUTO-LOGIN (kalau URL ada ?pass=)
+// TOGGLE PASSWORD
+// ============================================================
+function togglePassword() {
+  const input = document.getElementById('passwordInput');
+  const btn = document.getElementById('togglePw');
+  if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; }
+  else { input.type = 'password'; btn.textContent = '👁️'; }
+}
+
+// ============================================================
+// AUTO-LOGIN
 // ============================================================
 async function tryAutoLogin(pass) {
   try {
@@ -397,18 +448,12 @@ async function tryAutoLogin(pass) {
   return false;
 }
 
-// ============================================================
-// CHECK REMEMBER ME
-// ============================================================
 function checkRememberedLogin() {
   const saved = localStorage.getItem('pgrs_pass');
   const expiry = localStorage.getItem('pgrs_expiry');
-
   if (saved && expiry && Date.now() < parseInt(expiry)) {
-    // Masih valid — auto-login
     tryAutoLogin(saved);
   }
-  // Kalau expired — buang
   if (expiry && Date.now() >= parseInt(expiry)) {
     localStorage.removeItem('pgrs_pass');
     localStorage.removeItem('pgrs_expiry');
@@ -424,10 +469,7 @@ async function doLogin() {
   const btn = document.getElementById('loginBtn');
   const remember = document.getElementById('rememberCheck').checked;
 
-  if (!input) {
-    errorEl.textContent = 'Please enter password';
-    return;
-  }
+  if (!input) { errorEl.textContent = 'Please enter password'; return; }
 
   btn.disabled = true;
   btn.textContent = 'CHECKING...';
@@ -436,12 +478,9 @@ async function doLogin() {
   try {
     const res = await fetch('/api/check-role?pass=' + encodeURIComponent(input));
     const data = await res.json();
-
     if (data.success) {
       PASSWORD = input;
       USER_ROLE = data.role;
-
-      // Save kalau tick remember
       if (remember) {
         localStorage.setItem('pgrs_pass', input);
         localStorage.setItem('pgrs_expiry', Date.now() + (7 * 24 * 60 * 60 * 1000));
@@ -449,7 +488,6 @@ async function doLogin() {
         localStorage.removeItem('pgrs_pass');
         localStorage.removeItem('pgrs_expiry');
       }
-
       openApp();
     } else {
       errorEl.textContent = '❌ Wrong password';
@@ -473,20 +511,15 @@ function toggleRemember() {
 // ============================================================
 function doLogout() {
   if (!confirm('Logout dari app?')) return;
-
   localStorage.removeItem('pgrs_pass');
   localStorage.removeItem('pgrs_expiry');
-
   PASSWORD = '';
   USER_ROLE = 'staff';
-
-  // Reset UI
   document.getElementById('appPage').classList.add('hidden');
   document.getElementById('loginPage').classList.remove('hidden');
   document.getElementById('passwordInput').value = '';
   document.getElementById('rememberCheck').checked = false;
   document.getElementById('loginError').textContent = '';
-
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -497,15 +530,16 @@ function openApp() {
   document.getElementById('loginPage').classList.add('hidden');
   document.getElementById('appPage').classList.remove('hidden');
 
-  // Tunjuk/sorok admin menu
   if (USER_ROLE === 'admin') {
     document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
   } else {
     document.querySelectorAll('.admin-only').forEach(el => el.classList.add('hidden'));
   }
 
-  loadNextNumber();
-  loadProgress();
+  if (USER_ROLE === 'admin') {
+    loadNextNumber();
+    loadProgress();
+  }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -531,12 +565,10 @@ function autoFillFromIC() {
   const dobInput = document.getElementById('tarikhLahir');
   const hint = document.getElementById('icHint');
   const ic = icInput.value;
-
   let digits = ic.replace(/\D/g, '');
   if (digits.length === 12) {
     icInput.value = digits.replace(/(\d{6})(\d{2})(\d{4})/, '$1-$2-$3');
   }
-
   const dob = detectDOBFromIC(icInput.value);
   if (dob) {
     if (!dobInput.dataset.manualEdit || dobInput.dataset.manualEdit !== 'true') {
@@ -566,9 +598,7 @@ function autoFillBirthPlace() {
   const alamatInput = document.getElementById('alamat');
   const pobInput = document.getElementById('tempatLahir');
   const alamat = alamatInput.value;
-
   if (pobInput.dataset.manualEdit === 'true') return;
-
   let place = detectBirthPlaceFromAddress(alamat);
   if (place) {
     pobInput.value = place;
@@ -601,6 +631,7 @@ function hideAllSections() {
 }
 
 function showScan() {
+  if (USER_ROLE !== 'admin') return;
   hideAllSections();
   document.getElementById('sectionScan').classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -627,6 +658,7 @@ function showForm() {
 }
 
 function showStatistik() {
+  if (USER_ROLE !== 'admin') return;
   hideAllSections();
   document.getElementById('sectionStat').classList.add('active');
   loadStatistik();
@@ -663,9 +695,11 @@ function previewImage(event) {
 }
 
 // ============================================================
-// SCAN BORANG
+// SCAN BORANG (ADMIN ONLY)
 // ============================================================
 async function scanBorang() {
+  if (USER_ROLE !== 'admin') { showToast('Admin only', true); return; }
+
   const fileInput = document.getElementById('gambarBorang');
   const file = fileInput.files[0];
   if (!file) { showToast('Please take a photo first', true); return; }
@@ -785,11 +819,13 @@ async function simpanAhli() {
 
     const result = await res.json();
     if (result.success) {
-      showToast('✅ Saved! Form No: ' + result.noBorang);
+      showToast('✅ Saved!');
       setTimeout(() => {
         resetForm();
-        loadNextNumber();
-        loadProgress();
+        if (USER_ROLE === 'admin') {
+          loadNextNumber();
+          loadProgress();
+        }
       }, 1500);
     } else {
       showToast('Error: ' + (result.error || 'Save failed'), true);
@@ -810,7 +846,8 @@ async function loadNextNumber() {
     const res = await fetch('/api/next-number?pass=' + encodeURIComponent(PASSWORD));
     const data = await res.json();
     if (data.success) {
-      document.getElementById('nextNumber').textContent = data.nextNumber;
+      const el = document.getElementById('nextNumber');
+      if (el) el.textContent = data.nextNumber;
       return data.nextNumber;
     }
   } catch (err) { console.error(err); }
@@ -824,9 +861,13 @@ async function loadProgress() {
     if (data.success) {
       const total = data.stats.total;
       const target = 400;
-      document.getElementById('progressText').textContent = total + ' / ' + target;
-      const percent = Math.min(100, (total / target) * 100);
-      document.getElementById('progressFill').style.width = percent + '%';
+      const progressEl = document.getElementById('progressText');
+      const fillEl = document.getElementById('progressFill');
+      if (progressEl) progressEl.textContent = total + ' / ' + target;
+      if (fillEl) {
+        const percent = Math.min(100, (total / target) * 100);
+        fillEl.style.width = percent + '%';
+      }
     }
   } catch (err) { console.error(err); }
 }
@@ -918,15 +959,11 @@ async function printSenarai() {
 // ============================================================
 window.addEventListener('DOMContentLoaded', async () => {
   console.log('PGRS Keningau loaded');
-
-  // 1. Cuba auto-login dari URL (?pass=)
   const urlPass = URL_PARAMS.get('pass');
   if (urlPass) {
     const ok = await tryAutoLogin(urlPass);
     if (ok) return;
   }
-
-  // 2. Cuba auto-login dari localStorage (Remember Me)
   checkRememberedLogin();
 });
 </script>
