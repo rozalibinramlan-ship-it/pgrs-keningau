@@ -1,7 +1,8 @@
 // ============================================================
-// PGRS KENINGAU — SERVER (v6 FINAL)
+// PGRS KENINGAU — SERVER (v7 FINAL + HEALTH)
 // Role: staff / admin
 // Auto UPPERCASE
+// Health endpoint untuk UptimeRobot
 // ============================================================
 
 const express = require('express');
@@ -16,20 +17,38 @@ const PORT = process.env.PORT || 3000;
 // ============================================================
 // CONFIG
 // ============================================================
-const APP_PASSWORD = process.env.APP_PASSWORD || 'pgrs-keningau';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin2026';
+const APP_PASSWORD = process.env.APP_PASSWORD;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GOOGLE_SHEET_ID = process.env.GOOGLE_SHEET_ID;
+
+// Validate env variables on startup
+if (!APP_PASSWORD) {
+  console.error('❌ APP_PASSWORD is not set in environment variables!');
+  process.exit(1);
+}
+if (!ADMIN_PASSWORD) {
+  console.error('❌ ADMIN_PASSWORD is not set in environment variables!');
+  process.exit(1);
+}
+if (!GEMINI_API_KEY) {
+  console.warn('⚠️ GEMINI_API_KEY is not set — AI features will fail.');
+}
+if (!GOOGLE_SHEET_ID) {
+  console.warn('⚠️ GOOGLE_SHEET_ID is not set — Sheet features will fail.');
+}
 
 // ============================================================
 // GEMINI AI
 // ============================================================
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+
+// Updated model list (gemini-3.8-flash does NOT exist)
 const MODEL_LIST = [
   'gemini-2.0-flash-lite',
   'gemini-2.0-flash',
   'gemini-2.5-flash',
-  'gemini-3.8-flash'
+  'gemini-2.5-pro'
 ];
 
 // ============================================================
@@ -100,7 +119,29 @@ async function callGeminiWithFallback(parts) {
 // ROUTES
 // ============================================================
 
-// Check role
+// ------------------------------------------------------------
+// HEALTH CHECK (untuk UptimeRobot + monitoring)
+// ------------------------------------------------------------
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
+
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    app: 'PGRS Keningau',
+    version: 'v7',
+    gemini_configured: !!GEMINI_API_KEY,
+    sheet_configured: !!GOOGLE_SHEET_ID,
+    models: MODEL_LIST,
+    timestamp: new Date().toISOString(),
+    uptime: Math.floor(process.uptime()) + 's'
+  });
+});
+
+// ------------------------------------------------------------
+// CHECK ROLE
+// ------------------------------------------------------------
 app.get('/api/check-role', (req, res) => {
   const pass = req.query.pass;
   const role = getRole(pass);
@@ -111,14 +152,18 @@ app.get('/api/check-role', (req, res) => {
   }
 });
 
-// Check password
+// ------------------------------------------------------------
+// CHECK PASSWORD
+// ------------------------------------------------------------
 app.get('/api/check-password', (req, res) => {
   const pass = req.query.pass;
   if (getRole(pass)) return res.json({ success: true });
   res.status(401).json({ success: false });
 });
 
-// Next number
+// ------------------------------------------------------------
+// NEXT NUMBER
+// ------------------------------------------------------------
 app.get('/api/next-number', checkPassword, async (req, res) => {
   try {
     const response = await sheets.spreadsheets.values.get({
@@ -135,7 +180,9 @@ app.get('/api/next-number', checkPassword, async (req, res) => {
   }
 });
 
-// Test AI
+// ------------------------------------------------------------
+// TEST AI
+// ------------------------------------------------------------
 app.get('/api/test-ai', checkPassword, async (req, res) => {
   const result = await callGeminiWithFallback('Balas dengan: OK');
   if (result.success) {
@@ -145,7 +192,9 @@ app.get('/api/test-ai', checkPassword, async (req, res) => {
   }
 });
 
-// Scan (admin only)
+// ------------------------------------------------------------
+// SCAN (admin only)
+// ------------------------------------------------------------
 app.post('/api/scan', checkAdmin, async (req, res) => {
   try {
     const { image, mimeType } = req.body;
@@ -175,7 +224,9 @@ Use null if unclear.`;
   }
 });
 
-// Save (staff + admin) — AUTO UPPERCASE
+// ------------------------------------------------------------
+// SAVE (staff + admin) — AUTO UPPERCASE
+// ------------------------------------------------------------
 app.post('/api/save', checkPassword, async (req, res) => {
   try {
     const {
@@ -230,7 +281,9 @@ app.post('/api/save', checkPassword, async (req, res) => {
   }
 });
 
-// List (admin only)
+// ------------------------------------------------------------
+// LIST (admin only)
+// ------------------------------------------------------------
 app.get('/api/list', checkAdmin, async (req, res) => {
   try {
     const response = await sheets.spreadsheets.values.get({
@@ -244,7 +297,9 @@ app.get('/api/list', checkAdmin, async (req, res) => {
   }
 });
 
-// Stats (staff + admin)
+// ------------------------------------------------------------
+// STATS (staff + admin)
+// ------------------------------------------------------------
 app.get('/api/stats', checkPassword, async (req, res) => {
   try {
     const response = await sheets.spreadsheets.values.get({
@@ -267,18 +322,31 @@ app.get('/api/stats', checkPassword, async (req, res) => {
   }
 });
 
-// Serve register.html
+// ------------------------------------------------------------
+// SERVE register.html
+// ------------------------------------------------------------
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'register.html'));
+});
+
+// ============================================================
+// 404 FALLBACK
+// ============================================================
+app.use((req, res) => {
+  res.status(404).json({ success: false, error: 'Endpoint not found' });
 });
 
 // ============================================================
 // START
 // ============================================================
 app.listen(PORT, () => {
+  console.log('════════════════════════════════════════════');
   console.log(`✅ PGRS Keningau server running on port ${PORT}`);
-  console.log(`🔑 Staff password: ${APP_PASSWORD}`);
-  console.log(`🔐 Admin password: ${ADMIN_PASSWORD}`);
-  console.log(`⚡ AI models: ${MODEL_LIST.length} (fallback)`);
-  console.log(`📊 Sheet: Sheet1!A:L (12 kolum)`);
+  console.log(`🔑 Staff password: ${APP_PASSWORD ? 'SET' : 'MISSING ⚠️'}`);
+  console.log(`🔐 Admin password: ${ADMIN_PASSWORD ? 'SET' : 'MISSING ⚠️'}`);
+  console.log(`⚡ AI models: ${MODEL_LIST.length} (with fallback)`);
+  console.log(`   → ${MODEL_LIST.join(', ')}`);
+  console.log(`📊 Sheet ID: ${GOOGLE_SHEET_ID ? 'SET' : 'MISSING ⚠️'}`);
+  console.log(`🩺 Health: /health & /api/health`);
+  console.log('════════════════════════════════════════════');
 });
